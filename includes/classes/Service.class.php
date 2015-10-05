@@ -1,78 +1,69 @@
 <?php
-class Customer {
+class Service {
     var $dbBean;
 	var $general;
     
-    function Customer($dbBean) {
+    function Service($dbBean) {
         $this->dbBean=$dbBean;
 		$this->general=new General($this->dbBean);
 	}
 	
-	public function addCustomer($fieldvalues)
+	public function addService($fieldvalues)
 	{
-		$saved = $this->dbBean->InsertRow("customer", $fieldvalues);
+		$saved = $this->dbBean->InsertRow("services", $fieldvalues);
 		return $saved;
 	}
 	
-	public function updateCustomer($fieldvalues, $cond)
+	public function updateService($fieldvalues, $cond)
 	{
-		$edited = $this->dbBean->UpdateRows("customer", $fieldvalues, $cond);
+		$edited = $this->dbBean->UpdateRows("services", $fieldvalues, $cond);
 		return $edited;
 	}
 
-	public static function getCustomers()
+	public static function getServices()
 	{
 		$resultarray=array();
 		global $dbBean;
 		
-		$query="SELECT * FROM customer where is_deleted=0 order by id desc";
+		$query="SELECT * FROM services where is_deleted=0 order by id desc";
 		
 		if (!$dbBean->QueryArray($query)) $dbBean->Kill();
 		if ($dbBean->RowCount()>0)
 		{
 			$resultarray = $dbBean->RecordsArray(MYSQLI_ASSOC);
 		}
-		return $resultarray;
-		
+		return $resultarray;		
 	}
 	
-	public static function getCustomerById($id=0)
+	public static function getServiceById($id=0)
 	{
 		$resultarray=array();
 		global $dbBean;
-		$query="SELECT * FROM customer WHERE is_deleted=0 and id=" . intval($id);
+		$query="SELECT * FROM services WHERE is_deleted=0 and id=" . intval($id);
 		
 		if (! $resultarray = $dbBean->QuerySingleRow($query)) $dbBean->Kill();
-		return $resultarray;
-		
+		return $resultarray;		
 	}
-	
-	
-	public function deleteCustomer($fieldvalues,$cond)
+		
+	public function deleteService($fieldvalues,$cond)
 	{
-		$edited = $this->dbBean->UpdateRows("customer", $fieldvalues, $cond);
+		$edited = $this->dbBean->UpdateRows("services", $fieldvalues, $cond);
 		return $edited;
 	}
 	
-	public static function getCustomerByEmail($email='',$id='')
+	public static function getServicecategory()
 	{
 		$resultarray=array();
 		global $dbBean;
-		
-		if ($id != ''){
-			$cond = "email='". $email."' and id!=".$id;
-		}else{
-			$cond = "email='". $email."'";	
+	
+		$query="SELECT * FROM servicecategory where is_deleted=0 order by id desc";
+	
+		if (!$dbBean->QueryArray($query)) $dbBean->Kill();
+		if ($dbBean->RowCount()>0)
+		{
+			$resultarray = $dbBean->RecordsArray(MYSQLI_ASSOC);
 		}
-				
-		$query="SELECT count(id) cnt FROM customer WHERE  $cond";
-		
-		$dbBean->QueryArray($query);
-		
-		$resultarray = $dbBean->RecordsArray(MYSQLI_ASSOC);
-		$cnt = $resultarray[0]['cnt'];
-		
-		return $cnt;
-	}	
+		return $resultarray;
+	}
 }
 ?>

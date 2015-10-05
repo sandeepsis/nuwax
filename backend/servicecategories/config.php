@@ -5,6 +5,6 @@
 	include(URL."classes/mysql.class.php");	
 	include(URL."classes/General.class.php");
 	include(URL."classes/MenuManager.class.php");
-	include(URL."classes/class.phpmailer.php");
-	include(URL."classes/Service.class.php");
+	include(URL.'classes/ResizeImage.class.php');
+	include(URL."classes/Servicecategory.class.php");
 ?>

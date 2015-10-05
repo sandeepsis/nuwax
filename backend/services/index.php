@@ -54,8 +54,7 @@
 			<div class="row">
 				<div class="col-md-12">
               			<?php 
-                        	if(isset($_SESSION['msg']))
-                            {
+                        	if (isset($_SESSION['msg'])) {
                         ?>
                             <div class="alert alert-<?php echo $_REQUEST['msg'];?> fade in">
                             <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
@@ -82,12 +81,18 @@
 								<div class="row">
 									<div class="col-md-6">
 										<div class="btn-group">
-											<a href="<?php echo ADMIN_URL;?>/Customers/add.php" class="btn green">
+											<a href="<?php echo ADMIN_URL;?>/Services/add.php" class="btn green">
 											Add New <i class="fa fa-plus"></i>
 											</a>
 										</div>
+										
+										<div class="btn-group">
+											<a href="<?php echo ADMIN_URL;?>/Servicecategories/index.php" class="btn green">
+											Manage Service Category <i class="fa fa-plus"></i>
+											</a>
+										</div>
 									</div>
-                                    
+                                                                        
 									<div class="col-md-6">
 										<div class="btn-group pull-right">
 											<button class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Tools <i class="fa fa-angle-down"></i>
@@ -101,45 +106,39 @@
                                     
 								</div>
 							</div>
-                    <form name="form1" method="post" action="<?php echo ADMIN_URL;?>/customers/DB.php?FLAG=DELSELECT">
+                    <form name="form1" method="post" action="<?php echo ADMIN_URL;?>/services/DB.php?FLAG=DELSELECT">
                     <table class="table table-striped table-bordered table-hover" id="sample_1">
                     <thead>
                     <tr>
                         <th class="table-checkbox"><input type="checkbox" class="group-checkable" data-set="#sample_1 .checkboxes"/></th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Contact No</th>
-                        <th>Status</th>
+                        <th>Service Name</th>
+                        <th>Price</th>
+                        <th>Service Time</th>
+                        <th>Description</th>
                         <th>Date Created</th>
                         <th>Action</th>
                     </tr>
                     </thead>
                     <tbody>
                     <?php	
-					$results=Customer::getCustomers();
+					$results=Service::getServices();
 
 					if (count($results)>0)
 					{
 						  for ($index = 0; $index < count($results); $index++) 
 						  {
 							  $rows = $results[$index];
-							  
-							  if($rows['status'] == '0')
-							  		$status = "Active";
-							  else if($rows['status'] == '1')
-							  		$status = "Inactive";
-							  
+							  							  
                    		?>
                         <tr class="<?php echo (($index+1)%2==0)? 'even':'odd' ?> gradeX">
                             <td> <input  name="delete[]" type="checkbox" id="delete[]" value="<?php echo $rows['id'] ;?>" class="checkboxes" /> </td>
-                            <td><?php echo $general->subStr($rows['name'], 60); ?></td>
-                            <td><?php echo $general->subStr($rows['email'], 60); ?></td>
-                            <td><?php echo $rows['contactno'];?></td>
-                            <td><?php echo $status;?></td>
-                            <td><?php echo $rows['registerdate'];?></td> 
+                            <td><?php echo $general->subStr($rows['servicename'], 60); ?></td>
+                            <td><?php echo $general->subStr($rows['price'], 60); ?></td>
+                            <td><?php echo $rows['servicetime'].' min';?></td>
+                            <td><?php echo $rows['description'];?></td>
+                            <td><?php echo $rows['date_added'];?></td> 
                             <td>
-                            	<a href="<?php echo ADMIN_URL;?>/customers/changePassword.php?id=<?php echo $rows['id'];?>" class="btn default btn-xs purple"><i class="fa fa-lock"></i> Change Password </a>
-                                <a href="<?php echo ADMIN_URL;?>/customers/edit.php?id=<?php echo $rows['id'];?>" class="btn default btn-xs purple"><i class="fa fa-edit"></i> Edit </a>&nbsp;<a href="<?php echo ADMIN_URL;?>/customers/DB.php?id=<?php echo $rows['id']; ?>&FLAG=DELETE" class="dellink btn default btn-xs purple"><i class="fa fa-trash-o"></i> Delete </a>
+                                <a href="<?php echo ADMIN_URL;?>/services/edit.php?id=<?php echo $rows['id'];?>" class="btn default btn-xs purple"><i class="fa fa-edit"></i> Edit </a>&nbsp;<a href="<?php echo ADMIN_URL;?>/services/DB.php?id=<?php echo $rows['id']; ?>&FLAG=DELETE" class="dellink btn default btn-xs purple"><i class="fa fa-trash-o"></i> Delete </a>
                             </td>
                         </tr>
                     <?php 
