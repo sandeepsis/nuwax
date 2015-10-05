@@ -2,73 +2,112 @@
 	include('config.php');
 	$dbBean = new DatabaseBean();	
 	$general = new General($dbBean);
-	$Customer = new Customer($dbBean);
+	$Service = new Service($dbBean);
 
-	if($_REQUEST['FLAG']=='ADD_CUSTOMER')
+	if($_REQUEST['FLAG']=='ADD_SERVICE')
 	{			
-		if(trim($_REQUEST['name'])=="")
+		if(trim($_REQUEST['servicecat'])=="")
 		{
-			$_SESSION['msg']='Please enter name.';
+			$_SESSION['msg']='Please select service category.';
 			$num='danger';
-			$url= ADMIN_URL."/customers/add.php";
+			$url= ADMIN_URL."/services/add.php";
 			$general->redirectUrl($url, $num);
 		    exit;
 		}
 		
-		if(trim($_REQUEST['emailid'])=="")
+		if(trim($_REQUEST['servicename'])=="")
 		{
-			$_SESSION['msg']='Please enter email.';
+			$_SESSION['msg']='Please enter service name.';
 			$num='danger';
-			$url= ADMIN_URL."/customers/add.php";
+			$url= ADMIN_URL."/services/add.php";
 			$general->redirectUrl($url, $num);
 			exit;
 		}
-		else {
-			if (!filter_var(trim($_REQUEST['emailid']), FILTER_VALIDATE_EMAIL)) {
-				$_SESSION['msg']='Please enter valid email.';
+		
+		if(trim($_REQUEST['price'])=="")
+		{
+			$_SESSION['msg']='Please enter price.';
+			$num='danger';
+			$url= ADMIN_URL."/services/add.php";
+			$general->redirectUrl($url, $num);
+			exit;
+		}
+		else
+		{
+			$pattern = '/^[0-9]+(?:\.[0-9]{0,2})?$/';
+			if (preg_match($pattern, trim($_REQUEST['price'])) == '0') {
+				$_SESSION['msg']='Please enter valid price.';
 				$num='danger';
-				$url= ADMIN_URL."/customers/add.php";
+				$url= ADMIN_URL."/services/add.php";
 				$general->redirectUrl($url, $num);
 				exit;
 			}
-			else {
-				$rowdata = $Customer->getCustomerByEmail($_REQUEST['emailid'],$id='');
+		}
 				
-				if($rowdata > 0)
-				{
-					$_SESSION['msg']='Email address already exist.';
-					$num='danger';
-					$url= ADMIN_URL."/customers/add.php";
-					$general->redirectUrl($url, $num);
-					exit;
-				}
+		if(trim($_REQUEST['servicetime'])=="")
+		{
+			$_SESSION['msg']='Please enter service time';
+			$num='danger';
+			$url= ADMIN_URL."/services/add.php";
+			$general->redirectUrl($url, $num);
+			exit;
+		}
+		else
+		{
+			$pattern = '/^[0-9]+$/';
+			if (preg_match($pattern, trim($_REQUEST['servicetime'])) == '0') {
+				$_SESSION['msg']='Please enter valid service time.';
+				$num='danger';
+				$url= ADMIN_URL."/services/add.php";
+				$general->redirectUrl($url, $num);
+				exit;
 			}
 		}
 				
-		if(trim($_REQUEST['contactno'])=="")
+		if(trim($_REQUEST['description'])=="")
 		{
-			$_SESSION['msg']='Please enter contact no.';
+			$_SESSION['msg']='Please enter description';
 			$num='danger';
-			$url= ADMIN_URL."/customers/add.php";
-			$general->redirectUrl($url, $num);
-			exit;
-		}
-				
-		if(trim($_REQUEST['address'])=="")
-		{
-			$_SESSION['msg']='Please enter address';
-			$num='danger';
-			$url= ADMIN_URL."/customers/add.php";
+			$url= ADMIN_URL."/services/add.php";
 			$general->redirectUrl($url, $num);
 			exit;
 		}
 		
-		$fieldvalues = array('name' => $_REQUEST['name'], 'email' => $_REQUEST['emailid'], 'contactno'=> $_REQUEST['contactno'], "address" => $_REQUEST['address'], "studentcardno" => $_REQUEST['studentcardno'],"status" => $_REQUEST['status'], "remark" => $_REQUEST['remark'], "credit" => $_REQUEST['credit'],"is_deleted" =>0, "registerdate" => date('Y-m-d H:i:s'));
+		if(trim($_REQUEST['taxname'])=="")
+		{
+			$_SESSION['msg']='Please enter tax name';
+			$num='danger';
+			$url= ADMIN_URL."/services/add.php";
+			$general->redirectUrl($url, $num);
+			exit;
+		}
+		
+		if(trim($_REQUEST['taxper'])=="")
+		{
+			$_SESSION['msg']='Please enter tax (%)';
+			$num='danger';
+			$url= ADMIN_URL."/services/add.php";
+			$general->redirectUrl($url, $num);
+			exit;
+		}
+		else
+		{
+			$pattern = '/^[0-9]+(?:\.[0-9]{0,2})?$/';
+			if (preg_match($pattern, trim($_REQUEST['taxper'])) == '0') {
+				$_SESSION['msg']='Please enter valid tax (%).';
+				$num='danger';
+				$url= ADMIN_URL."/services/add.php";
+				$general->redirectUrl($url, $num);
+				exit;
+			}
+		}
+		
+		$fieldvalues = array('servicecatid' => $_REQUEST['servicecat'],'servicename' => $_REQUEST['servicename'], 'price' => $_REQUEST['price'], 'servicetime'=> $_REQUEST['servicetime'], "description" => $_REQUEST['description'], "taxname" => $_REQUEST['taxname'],"taxapplicable" => $_REQUEST['taxper'], "tax_underpackage" => $_REQUEST['taxunderpackage'],"is_deleted" => '0', "date_added" => date('Y-m-d H:i:s'));
 						
-		$updated = $Customer->addCustomer($fieldvalues);
+		$updated = $Service->addService($fieldvalues);
 		
 		if ($updated){			
-			$general->addLogAction($_SESSION['adm_user_id'],'Added', $updated, 'Customer Management', $_SESSION['adm_status']);
+			$general->addLogAction($_SESSION['adm_user_id'],'Added', $updated, 'Service Management', $_SESSION['adm_status']);
 			$error  = 'success';
 			$_SESSION['msg'] = 'Record added successfully.';
 		}else{
@@ -76,87 +115,130 @@
 			$_SESSION['msg']='Error adding record.';
 		}
 				
-		$url= ADMIN_URL."/customers/index.php";
+		$url= ADMIN_URL."/services/index.php";
 		$general->redirectUrl($url,$error);
 		exit;
 	}	
 	
 	/*********************************************************************************************************/
 	
-	if($_REQUEST['FLAG']=='EDIT_CUSTOMER')
+	if($_REQUEST['FLAG']=='EDIT_SERVICE')
 	{		
-		if(trim($_REQUEST['name'])=="")
+	if(trim($_REQUEST['servicecat'])=="")
 		{
-			$_SESSION['msg']='Please enter name.';
+			$_SESSION['msg']='Please select service category.';
 			$num='danger';
 			$num.='&id='.$_REQUEST['id'];
-			$url= ADMIN_URL."/customers/edit.php";
+			$url= ADMIN_URL."/services/edit.php";
 			$general->redirectUrl($url, $num);
 		    exit;
 		}
 		
-		if(trim($_REQUEST['emailid'])=="")
+		if(trim($_REQUEST['servicename'])=="")
 		{
-			$_SESSION['msg']='Please enter email.';
+			$_SESSION['msg']='Please enter service name.';
 			$num='danger';
 			$num.='&id='.$_REQUEST['id'];
-			$url= ADMIN_URL."/customers/edit.php";
+			$url= ADMIN_URL."/services/edit.php";
 			$general->redirectUrl($url, $num);
 			exit;
 		}
-		else {
-			if (!filter_var(trim($_REQUEST['emailid']), FILTER_VALIDATE_EMAIL)) {
-				$_SESSION['msg']='Please enter valid email.';
+		
+		if(trim($_REQUEST['price'])=="")
+		{
+			$_SESSION['msg']='Please enter price.';
+			$num='danger';
+			$num.='&id='.$_REQUEST['id'];
+			$url= ADMIN_URL."/services/edit.php";
+			$general->redirectUrl($url, $num);
+			exit;
+		}
+		else
+		{
+			$pattern = '/^[0-9]+(?:\.[0-9]{0,2})?$/';
+			if (preg_match($pattern, trim($_REQUEST['price'])) == '0') {
+				$_SESSION['msg']='Please enter valid price.';
 				$num='danger';
 				$num.='&id='.$_REQUEST['id'];
-				$url= ADMIN_URL."/customers/edit.php";
+				$url= ADMIN_URL."/services/edit.php";
 				$general->redirectUrl($url, $num);
 				exit;
 			}
-			else {
-				$rowdata = $Customer->getCustomerByEmail($_REQUEST['emailid'],$_REQUEST['id']);
+		}
 				
-				if($rowdata > 0)
-				{
-					$_SESSION['msg']='Email address already exist.';
-					$num='danger';
-					$num.='&id='.$_REQUEST['id'];
-					$url= ADMIN_URL."/customers/edit.php";
-					$general->redirectUrl($url, $num);
-					exit;
-				}
+		if(trim($_REQUEST['servicetime'])=="")
+		{
+			$_SESSION['msg']='Please enter service time';
+			$num='danger';
+			$num.='&id='.$_REQUEST['id'];
+			$url= ADMIN_URL."/services/edit.php";
+			$general->redirectUrl($url, $num);
+			exit;
+		}
+		else
+		{
+			$pattern = '/^[0-9]+$/';
+			if (preg_match($pattern, trim($_REQUEST['servicetime'])) == '0') {
+				$_SESSION['msg']='Please enter valid service time.';
+				$num='danger';
+				$num.='&id='.$_REQUEST['id'];
+				$url= ADMIN_URL."/services/edit.php";
+				$general->redirectUrl($url, $num);
+				exit;
 			}
 		}
 				
-		if(trim($_REQUEST['contactno'])=="")
+		if(trim($_REQUEST['description'])=="")
 		{
-			$_SESSION['msg']='Please enter contact no.';
+			$_SESSION['msg']='Please enter description';
 			$num='danger';
 			$num.='&id='.$_REQUEST['id'];
-			$url= ADMIN_URL."/customers/edit.php";
-			$general->redirectUrl($url, $num);
-			exit;
-		}
-				
-		if(trim($_REQUEST['address'])=="")
-		{
-			$_SESSION['msg']='Please enter address';
-			$num='danger';
-			$num.='&id='.$_REQUEST['id'];
-			$url= ADMIN_URL."/customers/edit`.php";
+			$url= ADMIN_URL."/services/edit.php";
 			$general->redirectUrl($url, $num);
 			exit;
 		}
 		
+		if(trim($_REQUEST['taxname'])=="")
+		{
+			$_SESSION['msg']='Please enter tax name';
+			$num='danger';
+			$num.='&id='.$_REQUEST['id'];
+			$url= ADMIN_URL."/services/edit.php";
+			$general->redirectUrl($url, $num);
+			exit;
+		}
+		
+		if(trim($_REQUEST['taxper'])=="")
+		{
+			$_SESSION['msg']='Please enter tax (%)';
+			$num='danger';
+			$num.='&id='.$_REQUEST['id'];
+			$url= ADMIN_URL."/services/edit.php";
+			$general->redirectUrl($url, $num);
+			exit;
+		}
+		else
+		{
+			$pattern = '/^[0-9]+(?:\.[0-9]{0,2})?$/';
+			if (preg_match($pattern, trim($_REQUEST['taxper'])) == '0') {
+				$_SESSION['msg']='Please enter valid tax (%).';
+				$num='danger';
+				$num.='&id='.$_REQUEST['id'];
+				$url= ADMIN_URL."/services/edit.php";
+				$general->redirectUrl($url, $num);
+				exit;
+			}
+		}		
+				
 		$cond		= array("id" => $_REQUEST['id']);
 
-		$fieldvalues = array('name' => $_REQUEST['name'], 'email' => $_REQUEST['emailid'], 'contactno'=> $_REQUEST['contactno'], "address" => $_REQUEST['address'], "studentcardno" => $_REQUEST['studentcardno'],"status" => $_REQUEST['status'], "remark" => $_REQUEST['remark'], "credit" => $_REQUEST['credit']);
+		$fieldvalues = array('servicecatid' => $_REQUEST['servicecat'],'servicename' => $_REQUEST['servicename'], 'price' => $_REQUEST['price'], 'servicetime'=> $_REQUEST['servicetime'], "description" => $_REQUEST['description'], "taxname" => $_REQUEST['taxname'],"taxapplicable" => $_REQUEST['taxper'], "tax_underpackage" => $_REQUEST['taxunderpackage']);
 		
-		$updated =$Customer->updateCustomer($fieldvalues, $cond);
+		$updated =$Service->updateService($fieldvalues, $cond);
 
 		if ($updated) 
 		{
-				$general->addLogAction($_SESSION['adm_user_id'], 'Edited', $_REQUEST['id'], 'Customer Management', $_SESSION['adm_status']);
+				$general->addLogAction($_SESSION['adm_user_id'], 'Edited', $_REQUEST['id'], 'Service Management', $_SESSION['adm_status']);
 				$error = 'success';
 				$_SESSION['msg'] = 'Record updated successfully.';
 		}else{
@@ -164,12 +246,10 @@
 				$_SESSION['msg'] = 'Error updating record.';
 		}
 		
-		$url= ADMIN_URL."/customers/index.php";
+		$url= ADMIN_URL."/services/index.php";
 		$general->redirectUrl($url,$error);
 		exit;
 	}		
-	
-	
 	
 	/*************************************************************************************/	
 	if(isset($_REQUEST['FLAG']) && $_REQUEST['FLAG']=='DELETE')
@@ -179,11 +259,11 @@
 		$cond		 = array("id" => $id);
 		$fieldvalues = array('is_deleted' => '1');
 		
-		$deleted = $Customer->deleteCustomer($fieldvalues,$cond);
+		$deleted = $Service->deleteService($fieldvalues,$cond);
 		
 		if($deleted)
 		{		
-				$general->addLogAction($_SESSION['adm_user_id'], 'Deleted', (int)$_REQUEST['id'], 'Customer Management', $_SESSION['adm_status']);
+				$general->addLogAction($_SESSION['adm_user_id'], 'Deleted', (int)$_REQUEST['id'], 'Service Management', $_SESSION['adm_status']);
 				$error = 'success';
 				$_SESSION['msg'] = 'Record deleted successfully.';
 		}
@@ -194,7 +274,7 @@
 		}
 		
 
-		$url = ADMIN_URL."/customers/index.php";
+		$url = ADMIN_URL."/services/index.php";
 		$general->redirectUrl($url, $error);
 		exit;
 	}
@@ -210,9 +290,9 @@
 			$cond		= array("id" => $id);
 			$fieldvalues = array('is_deleted' => '1');
 			
-			$val = $Customer->deleteCustomer($fieldvalues,$cond);
+			$val = $Service->deleteService($fieldvalues,$cond);
 		
-			$general->addLogAction($_SESSION['adm_user_id'], 'Deleted', (int)$id,'Customer Management', $_SESSION['adm_status']);
+			$general->addLogAction($_SESSION['adm_user_id'], 'Deleted', (int)$id,'Service Management', $_SESSION['adm_status']);
 		}
 		
 		if($val)
@@ -226,34 +306,11 @@
 			$error = 'danger';
 		}
 	
-		$url= ADMIN_URL."/customers/index.php";
+		$url= ADMIN_URL."/services/index.php";
 		$general->redirectUrl($url, $error);
 		exit;
 	
 	}
 	/*********************************************************************************************************/	
 	
-	if($_REQUEST['FLAG']=='CHANGEPWD')
-	{
-	
-		$cond		= array("id" => $_REQUEST['id']);
-		$fieldvalues = array('password'=>md5($_REQUEST['password']));
-		$updated = $dbBean->UpdateRows("customer", $fieldvalues, $cond);
-	
-	
-		if($updated)
-		{
-			$general->addLogAction($_SESSION['adm_user_id'],'Changed',$_REQUEST['id'],'Customer Password',$_SESSION['adm_status']);
-			$error  ='success';
-			$_SESSION['msg']='Password successfully changed.';
-		}else{
-			$error  ='danger';
-			$_SESSION['msg']='Error changing password.';
-		}
-	
-		$url= ADMIN_URL."/customers/index.php";
-		$general->redirectUrl($url,$error);
-		exit;
-	}	
-	/*********************************************************************************************************/
 ?>

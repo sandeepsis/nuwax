@@ -76,49 +76,28 @@
                             }
                        ?>
                         <!-- BEGIN FORM-->
-                        <form id="frmcustomer" name="frmcustomer" method="post" action="<?php echo ADMIN_URL;?>/customers/DB.php" class="form-horizontal">
+                        <form id="frmservicecat" name="frmservicecat" method="post" action="<?php echo ADMIN_URL;?>/servicecategories/DB.php" enctype="multipart/form-data" class="form-horizontal">
                             <div class="form-body">                                                                
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Name<span class="required" aria-required="true">*</span></label>
+                                    <label class="control-label col-md-3">Category Name<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Name" name="name" id="name" value=""/>    
+                                         <input type="text" class="form-control" placeholder="Category Name" name="categoryname" id="categoryname" value=""/>    
                                     </div>
                                 </div>
+                                
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Email ID<span class="required" aria-required="true">*</span></label>
+                                    <label class="control-label col-md-3">Description<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Email ID" name="emailid" id="emailid" value="" />    
+                                         <textarea class="form-control" placeholder="Description" name="description" id="description"></textarea>    
                                     </div>
                                 </div>
                                 
-                                <div class="form-group" id="divrname">
-                                    <label class="control-label col-md-3">Contact Number<span class="required" aria-required="true">*</span></label>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Image<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Contact Number" name="contactno" id="contactno" value="" />    
+                                         <input type="file" name="categoryimg" id="categoryimg" />     
                                     </div>
                                 </div>
-                                
-                                <div class="form-group" id="divremail">
-                                    <label class="control-label col-md-3">Address<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
-                                         <textarea class="form-control" placeholder="Address" name="address" id="address"></textarea>    
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group" id="divcpmy">
-                                    <label class="control-label col-md-3">Student Card No</label>
-                                    <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Student Card No" name="studentcardno" id="studentcardno" value="" />    
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group" id="divremail">
-                                    <label class="control-label col-md-3">Credit</label>
-                                    <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Credit" name="credit" id="credit" value="" />    
-                                    </div>
-                                </div>
-                                
                                 <div class="form-group" id="divcpmy">
                                     <label class="control-label col-md-3">Remark</label>
                                     <div class="col-md-4">
@@ -126,22 +105,13 @@
                                     </div>
                                 </div>
                                 
-                                <div class="form-group">
-                                    <label class="col-md-3 control-label">Status<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
-                                    	<select name="status" id="status" class="form-control form-filter input-sm">
-                                         	<option value="0">Active</option>
-                                         	<option value="1">Inactive</option>
-                                         </select>
-                                    </div>
-                                </div>   
                             </div>
                             <div class="form-actions">
                                 <div class="row">
                                     <div class="col-md-offset-3 col-md-4">
-                                    	<input type="hidden" name="FLAG" value="ADD_CUSTOMER" />
+                                    	<input type="hidden" name="FLAG" value="ADD_SERVICECAT" />
                                         <button type="submit" class="btn green">Submit</button>
-                                        <button type="button" class="btn default" name="cancel" onClick="javascript: window.location.href='<?php echo ADMIN_URL;?>/customers/index.php'">Cancel</button>
+                                        <button type="button" class="btn default" name="cancel" onClick="javascript: window.location.href='<?php echo ADMIN_URL;?>/servicecategories/index.php'">Cancel</button>
                                     </div>
                                 </div>
                             </div>
@@ -180,7 +150,7 @@ var FormValidation = function () {
         // for more info visit the official plugin documentation: 
         // http://docs.jquery.com/Plugins/Validation
 
-            var form3 = $('#frmcustomer');
+            var form3 = $('#frmservicecat');
             var error3 = $('.alert-danger', form3);
             var success3 = $('.alert-success', form3);
 			var user_type = $("#usertype").val();
@@ -191,20 +161,15 @@ var FormValidation = function () {
                 focusInvalid: false, // do not focus the last invalid input
                 ignore: "", // validate all fields including form hidden input
                 rules: {                	
-                	name: {
+                	categoryname: {
                         required: true
                     },                    
-                    emailid: {
-                        required: true,
-                        email: true
+                    description: {
+                        required: true
                     },
-    		        contactno: {                        
+    		        categoryimg: {                        
                         required: true,
-                        number: true
-                    },
-    		        address: {
-        		        required: true
-        		        }
+                    }
                },
 
                 messages: { 

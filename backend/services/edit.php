@@ -5,8 +5,8 @@
 	$general = new General($dbBean);
 	$menu_id	= (empty($_REQUEST['menu_id'])?$_SESSION['menu_id']:$_REQUEST['menu_id']);
 	$heading	= $general->getPageHeading($menu_id);
-	$Customer = new Customer($dbBean);
-	$rows = $Customer->getCustomerById($_REQUEST['id']);
+	$Service = new Service($dbBean);
+	$rows = $Service->getServiceById($_REQUEST['id']);
 	
 ?>
 <!DOCTYPE html>
@@ -80,76 +80,95 @@
                        ?>
                         <!-- BEGIN FORM-->
                         
-                        <form id="frmcustomer" name="frmcustomer" method="post" action="<?php echo ADMIN_URL;?>/customers/DB.php" class="form-horizontal">
+                        <form id="frmservice" name="frmservice" method="post" action="<?php echo ADMIN_URL;?>/services/DB.php" class="form-horizontal">
                             <div class="form-body">           
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Name<span class="required" aria-required="true">*</span></label>
+                                    <label class="control-label col-md-3">Service Category<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Name" name="name" id="name" value="<?php echo stripslashes($rows->name); ?>"/>    
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-md-3">Email Address<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Email Id" name="emailid" id="emailid" value="<?php echo stripslashes($rows->email); ?>" />    
-                                    </div>
-                                </div>
+                                    	<select name="servicecat" id="servicecat" class="form-control">
+                                    		<option value="">Select Service Category</option>
+	                                    	<?php
+	                                    	$results=Service::getServicecategory();
+	                                    	
+	                                    	if (count($results)>0) {
+	                                    		for ($index = 0; $index < count($results); $index++)
+	                                    		{
+	                                    			$mrows = $results[$index];
+	                                    			
+	                                    			if ($mrows['id'] == $rows->servicecatid) {
+	                                    			?>
+                                    					<option value="<?php echo $mrows['id'];?>" selected="selected"><?php echo $mrows['categoryname'];?></option>                                    					                                    			<?php
+	                                    			}else{
+	                                    			?>
+	                                    				<option value="<?php echo $mrows['id'];?>"><?php echo $mrows['categoryname'];?></option>
+	                                    			<?php
+	                                    			}
+	                                    		}
+	                                    	}                                    	
+	                                    	?>                                    		
+	                                    	</select>    
+	                                    </div>
+	                                </div>
+	                                                                                                
+	                                <div class="form-group">
+	                                    <label class="control-label col-md-3">Service Name<span class="required" aria-required="true">*</span></label>
+	                                    <div class="col-md-4">
+	                                         <input type="text" class="form-control" placeholder="Service Name" name="servicename" id="servicename" value="<?php echo stripslashes($rows->servicename); ?>"/>    
+	                                    </div>
+	                                </div>
+	                                <div class="form-group">
+	                                    <label class="control-label col-md-3">Price<span class="required" aria-required="true">*</span></label>
+	                                    <div class="col-md-4">
+	                                         <input type="text" class="form-control" placeholder="Price" name="price" id="price" value="<?php echo stripslashes($rows->price); ?>" />    
+	                                    </div>
+	                                </div>
+	                                
+	                                <div class="form-group">
+	                                    <label class="control-label col-md-3">Service Time<span class="required" aria-required="true">*</span></label>
+	                                    <div class="col-md-4">
+	                                         <input type="text" class="form-control" placeholder="Service time in minute" name="servicetime" id="servicetime" value="<?php echo stripslashes($rows->servicetime); ?>" />    
+	                                    </div>
+	                                </div>
+	                                
+	                                <div class="form-group">
+	                                    <label class="control-label col-md-3">Description<span class="required" aria-required="true">*</span></label>
+	                                    <div class="col-md-4">
+	                                         <textarea class="form-control" placeholder="Description" name="description" id="description"><?php echo stripslashes($rows->description); ?></textarea>    
+	                                    </div>
+	                                </div>
+	                                
+	                                <div class="form-group">
+	                                    <label class="control-label col-md-3">Tax Name<span class="required" aria-required="true">*</span></label>
+	                                    <div class="col-md-4">
+	                                         <input type="text" class="form-control" placeholder="Tax Name" name="taxname" id="taxname" value="<?php echo stripslashes($rows->taxname); ?>" />    
+	                                    </div>
+	                                </div>
+	                                
+	                                <div class="form-group">
+	                                    <label class="control-label col-md-3">Tax (%)<span class="required" aria-required="true">*</span></label>
+	                                    <div class="col-md-4">
+	                                         <input type="text" class="form-control" placeholder="Tax (%)" name="taxper" id="taxper" value="<?php echo stripslashes($rows->taxapplicable); ?>" />    
+	                                    </div>
+	                                </div>
+	                                
+	                                <div class="form-group">
+	                                    <label class="control-label col-md-3">Tax Under Package<span class="required" aria-required="true">*</span></label>
+	                                    <div class="col-md-4">
+	                                         <select name="taxunderpackage" id="taxunderpackage" class="form-control">
+	                                    		<option value="0" <?php if($rows->tax_underpackage == 0) {echo "selected=selected";}?>>Yes</option>
+	                                    		<option value="1" <?php if($rows->tax_underpackage == 1) {echo "selected=selected";}?>>No</option>
+	                                    	 </select>    
+	                                    </div>
+	                                </div>
                                 
-                                <div class="form-group">
-                                    <label class="control-label col-md-3">Contact No</label>
-                                    <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Contact No" name="contactno" id="contactno" value="<?php echo stripslashes($rows->contactno); ?>" />    
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="control-label col-md-3">Address</label>
-                                    <div class="col-md-4">
-                                         <textarea class="form-control" placeholder="Address" name="address" id="address"><?php echo stripslashes($rows->address); ?></textarea>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label class="control-label col-md-3">Student Card No</label>
-                                    <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Student Card No" name="studentcardno" id="studentcardno" value="<?php echo stripslashes($rows->studentcardno); ?>" />    
-                                    </div>
-                                </div>
-                                                                                               
-                                <div class="form-group">
-                                    <label class="control-label col-md-3">Credit</label>
-                                    <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Credit" name="credit" id="credit" value="<?php echo stripslashes($rows->credit); ?>" />    
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label class="control-label col-md-3">Remark</label>
-                                    <div class="col-md-4">
-                                         <textarea class="form-control" placeholder="Remark" name="remark" id="remark"><?php echo stripslashes($rows->remark); ?></textarea>    
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label class="col-md-3 control-label">Status<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
-                                    	<select name="status" id="status" class="form-control form-filter input-sm">    
-                                         	<option value="0" <?php if($rows->status == 0) {echo "selected=selected";}?>>Active</option>
-                                         	<option value="1" <?php if($rows->status == 1) {echo "selected=selected";}?>>Inactive</option>                                         	
-                                         </select>
-                                    </div>
-                                </div>
-
-
                             </div>
                             <div class="form-actions">
                                 <div class="row">
                                     <div class="col-md-offset-3 col-md-4">
-                                    	<input type="hidden" name="FLAG" value="EDIT_CUSTOMER" />
-                                    	<input type="hidden" name="statusflag" value="<?php echo $rows->status;?>" />
+                                    	<input type="hidden" name="FLAG" value="EDIT_SERVICE" />
                                         <input name="id" type="hidden" value="<?php echo $_REQUEST['id'];?>" />                                        
                                         <button type="submit" class="btn green">Submit</button>
-                                        <button type="button" class="btn default" name="cancel" onClick="javascript: window.location.href='<?php echo ADMIN_URL;?>/customers/index.php'">Cancel</button>
+                                        <button type="button" class="btn default" name="cancel" onClick="javascript: window.location.href='<?php echo ADMIN_URL;?>/services/index.php'">Cancel</button>
                                     </div>
                                 </div>
                             </div>
@@ -189,7 +208,7 @@ var FormValidation = function () {
         // for more info visit the official plugin documentation: 
         // http://docs.jquery.com/Plugins/Validation
 
-            var form3 = $('#frmcustomer');
+            var form3 = $('#frmservice');
             var error3 = $('.alert-danger', form3);
             var success3 = $('.alert-success', form3);
 
@@ -199,20 +218,30 @@ var FormValidation = function () {
                 focusInvalid: false, // do not focus the last invalid input
                 ignore: "", // validate all fields including form hidden input
                 rules: {
-                	name: {
+                	servicecat: {
                         required: true
-                    },                    
-                    emailid: {
-                        required: true,
-                        email: true
-                    },
-    		        contactno: {                        
+                    }, 
+                    servicename: {
+                        required: true
+                    },     
+    		        price: {                        
                         required: true,
                         number: true
                     },
-    		        address: {
-        		        required: true
-        		        }
+    		        servicetime: {
+        		        required: true,
+						number:true        		        
+        		    },
+        		    description: {
+                        required: true
+                    }, 
+                    taxname: {
+                        required: true
+                    },     
+    		        taxper: {                        
+                        required: true,
+                        number: true
+                    }
                 },
 
                 messages: { // custom messages for radio buttons and checkboxes
