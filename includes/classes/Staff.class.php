@@ -9,7 +9,7 @@ class Staff {
 	}
 		
 	public function addStaffmember($resizeImage,$temp_storage, $large_img_path, $large_img_width, $large_img_height, $thumb_img_path, $thumb_img_width, $thumb_img_height, $request)
-	{
+	{	
 		if ( !is_array($request) || count($request) <= 0 ) {
 			return false;
 		}
@@ -41,7 +41,20 @@ class Staff {
 			$fields	 = array('image');
 			$values	 = array($filename);
 			$cond	 = array('id' => $staff_id);
-			$updated = $this->dbBean->UpdateRows('staff', array_combine ( $fields, $values ), $cond);			
+			$updated = $this->dbBean->UpdateRows('staff', array_combine ( $fields, $values ), $cond);
+			
+			for($i=0;$i<count($request['assignservice']);$i++)
+			{
+				if ($request['assignservice'][$i] !="" && $request['stafflevel'][$i] != "") {
+					$assignservice = $request['assignservice'][$i];
+					$assignstafflevel = $request['stafflevel'][$i];
+					
+					$fields	= array('staffid','serviceid','stafflevelid');
+					$values	= array($staff_id,$assignservice, $assignstafflevel);
+						
+					$this->dbBean->InsertRow('staffservices', array_combine ( $fields, $values ));
+				}
+			}
 		}
 		
 		return $staff_id;
@@ -167,6 +180,21 @@ class Staff {
 			$resultarray = $dbBean->RecordsArray(MYSQLI_ASSOC);
 		}
 		return $resultarray;		
+	}
+	
+	public static function getStafflevel()
+	{
+		$resultarray=array();
+		global $dbBean;
+	
+		$query="SELECT * FROM stafflevel where is_deleted=0 order by id asc";
+	
+		if (!$dbBean->QueryArray($query)) $dbBean->Kill();
+		if ($dbBean->RowCount()>0)
+		{
+			$resultarray = $dbBean->RecordsArray(MYSQLI_ASSOC);
+		}
+		return $resultarray;
 	}
 }
 ?>

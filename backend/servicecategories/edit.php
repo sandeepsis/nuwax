@@ -65,8 +65,7 @@
                     </div>
                     <div class="portlet-body form">
               			<?php 
-                        	if(isset($_SESSION['msg']))
-                            {
+                        	if (isset($_SESSION['msg'])) {
                         ?>
                             <div class="alert alert-<?php echo $_REQUEST['msg'];?> fade in">
                             <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
