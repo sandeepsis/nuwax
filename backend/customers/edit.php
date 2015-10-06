@@ -5,8 +5,8 @@
 	$general = new General($dbBean);
 	$menu_id	= (empty($_REQUEST['menu_id'])?$_SESSION['menu_id']:$_REQUEST['menu_id']);
 	$heading	= $general->getPageHeading($menu_id);
-	$Customer = new Customer($dbBean);
-	$rows = $Customer->getCustomerById($_REQUEST['id']);
+	$Customer 	= new Customer($dbBean);
+	$rows 		= $Customer->getCustomerById($_REQUEST['id']);
 	
 ?>
 <!DOCTYPE html>
@@ -65,8 +65,7 @@
                     </div>
                     <div class="portlet-body form">
               			<?php 
-                        	if(isset($_SESSION['msg']))
-                            {
+                        	if (isset($_SESSION['msg'])) {
                         ?>
                             <div class="alert alert-<?php echo $_REQUEST['msg'];?> fade in">
                             <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
@@ -134,8 +133,8 @@
                                     <label class="col-md-3 control-label">Status<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
                                     	<select name="status" id="status" class="form-control form-filter input-sm">    
-                                         	<option value="0" <?php if($rows->status == 0) {echo "selected=selected";}?>>Active</option>
-                                         	<option value="1" <?php if($rows->status == 1) {echo "selected=selected";}?>>Inactive</option>                                         	
+                                         	<option value="0" <?php if ($rows->status == 0) {echo "selected=selected";}?>>Active</option>
+                                         	<option value="1" <?php if ($rows->status == 1) {echo "selected=selected";}?>>Inactive</option>                                         	
                                          </select>
                                     </div>
                                 </div>

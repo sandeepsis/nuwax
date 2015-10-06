@@ -19,6 +19,12 @@
 
 <link rel="stylesheet" type="text/css" href="<?php echo ADMIN_URL;?>/assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
 
+<style>
+.nopadding{ padding-left:0px;} 
+.divpadding{padding-bottom:40px;} 
+.a_padding{padding:5px;}
+</style>
+
 <!-- END PAGE LEVEL STYLES -->
 <?php include('../common_second.php');?>
 </head>
@@ -131,7 +137,59 @@
 	                                    		}
 	                                    	}                                    	
 	                                    	?>                                    		
-	                                    	</select>    
+	                                    </select>    
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Assign Services<span class="required" aria-required="true">*</span></label>                                    
+	                                    <div class="col-md-4" id="divadd">
+	                                    	<div id='divrow1' class="divpadding">
+		                                    	<div class="col-md-5 nopadding">
+			                                    	<select name="assignservice[]" id="assignservice1" class="form-control">
+			                                    		<option value="">Select Service</option>
+				                                    	<?php
+				                                    	$results=Staff::getServices();
+				                                    	
+				                                    	if (count($results)>0) {
+				                                    		for ($index = 0; $index < count($results); $index++)
+				                                    		{
+				                                    			$rows = $results[$index];
+				                                    			?>
+				                                    			<option value="<?php echo $rows['id'];?>"><?php echo $rows['servicename'];?></option>
+				                                    			<?php 
+				                                    		}
+				                                    	}                                    	
+				                                    	?>                                    		
+				                                    </select>   
+			                                   </div>
+			                                   <div class="col-md-6 nopadding">
+				                                    <select name="stafflevel[]" id="stafflevel1" class="form-control">
+			                                    		<option value="">Select Staff Level</option>
+				                                    	<?php
+				                                    	$staffresults=Staff::getStafflevel();
+				                                    	
+				                                    	if (count($staffresults)>0) {
+				                                    		for ($index = 0; $index < count($staffresults); $index++)
+				                                    		{
+				                                    			$rows = $staffresults[$index];
+				                                    			?>
+				                                    			<option value="<?php echo $rows['id'];?>"><?php echo $rows['name'];?></option>
+				                                    			<?php 
+				                                    		}
+				                                    	}                                    	
+				                                    	?>                                    		
+				                                    </select>    
+			                                    </div>
+			                                    <div class="col-md-1 a_padding"></div>	
+			                                 </div>	                                     
+	                                    </div>  
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="control-label col-md-3"></label>
+                                    <div class="col-md-4">
+                                         <a href="#" onClick="javascript:fun_add();" title="Add">+ Add</a>  
                                     </div>
                                 </div>
                                 
@@ -140,6 +198,7 @@
                                 <div class="row">
                                     <div class="col-md-offset-3 col-md-4">
                                     	<input type="hidden" name="FLAG" value="ADD_STAFF" />
+                                    	<input type="hidden" name="assignservicecnt" id="assignservicecnt" />
                                         <button type="submit" class="btn green">Submit</button>
                                         <button type="button" class="btn default" name="cancel" onClick="javascript: window.location.href='<?php echo ADMIN_URL;?>/staff/index.php'">Cancel</button>
                                     </div>
@@ -172,6 +231,27 @@ jQuery(document).ready(function() {
    Layout.init(); // init current layout
    FormValidation.init();
 });
+
+var cnt = 2;
+function fun_add()
+{
+	var service = "assignservice"+cnt;
+	var staff = "stafflevel"+cnt;
+	var x = "divrow"+cnt;
+	$("#assignservicecnt").val(cnt);
+
+	//var d = "<?php //echo count($results);?>";
+	
+	var field = '<div id='+x+' class="divpadding"><div class="col-md-5 nopadding"><select name="assignservice[]" id='+service+' class="form-control"><option value="">Select Service</option> <?php $results=Staff::getServices(); if (count($results)>0) {	for ($index = 0; $index < count($results); $index++){ $rows = $results[$index]; ?> <option value="<?php echo $rows['id'];?>"><?php echo $rows['servicename'];?></option><?php }	} ?> </select></div><div class="col-md-6 nopadding"><select name="stafflevel[]" id='+staff+' class="form-control">	<option value="">Select Staff Level</option><?php $results=Staff::getStafflevel(); if (count($results)>0) { for ($index = 0; $index < count($results); $index++) { $rows = $results[$index];?><option value="<?php echo $rows['id'];?>"><?php echo $rows['name'];?></option><?php } } ?> </select></div><div class="col-md-1 a_padding"><a href="#" onclick="javascript: fun_deleterow('+cnt+');" title="Delete">Delete</a></div><div>';
+
+	$('#divadd').append(field);
+	cnt++;
+}
+
+function fun_deleterow(a)
+{
+	$('#divrow'+a).remove();
+}
 
 var FormValidation = function () {
 
@@ -210,7 +290,13 @@ var FormValidation = function () {
                     },
                     service:{
                         required:true
-                    }
+                    },
+                    service1:{
+                        required:true
+                    },
+                    stafflevel1:{
+                        required:true
+                    }                    
                },
 
                 messages: { 

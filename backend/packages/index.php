@@ -119,8 +119,7 @@
                     <?php	
 					$results=Package::getPackages();
 
-					if (count($results)>0)
-					{
+					if (count($results)>0) {
 						  for ($index = 0; $index < count($results); $index++) 
 						  {
 							  $rows = $results[$index];

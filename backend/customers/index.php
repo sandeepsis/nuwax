@@ -54,8 +54,7 @@
 			<div class="row">
 				<div class="col-md-12">
               			<?php 
-                        	if(isset($_SESSION['msg']))
-                            {
+                        	if (isset($_SESSION['msg'])) {
                         ?>
                             <div class="alert alert-<?php echo $_REQUEST['msg'];?> fade in">
                             <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
@@ -118,8 +117,7 @@
                     <?php	
 					$results=Customer::getCustomers();
 
-					if (count($results)>0)
-					{
+					if (count($results)>0){
 						  for ($index = 0; $index < count($results); $index++) 
 						  {
 							  $rows = $results[$index];
