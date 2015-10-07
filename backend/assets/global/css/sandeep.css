@@ -1,0 +1,15 @@
+/* For Staff and service (add dymanic row)*/
+.nopadding{ padding-left:0px;} 
+.divpadding{padding-bottom:40px;} 
+.a_padding{padding:5px;}
+/******************************************/
+.diverror
+{
+	color:red;
+}
+
+
+.nopadding > .help-block  
+{
+	color: #a94442 !important;
+}

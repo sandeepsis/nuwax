@@ -61,7 +61,7 @@ class Staff {
 	}
 	
 	public function updateStaffmember($id,$old_file_name,$resizeImage,$temp_storage, $large_img_path, $large_img_width, $large_img_height, $thumb_img_path, $thumb_img_width, $thumb_img_height, $request)
-	{
+	{	
 		if ( !is_array($request) || count($request) <= 0 ) {
 			return false;
 		}
@@ -104,6 +104,38 @@ class Staff {
 		
 		if ( !$updated  = $this->dbBean->UpdateRows('staff', array_combine ( $fields, $values ), $cond) ) {
 			return false;
+		}
+		
+		for($i=0;$i<count($request['assignservice']);$i++)
+		{
+			if ($request['assignservice'][$i] !="" && $request['stafflevel'][$i] != "") {
+				$assignservice = $request['assignservice'][$i];
+				$assignstafflevel = $request['stafflevel'][$i];
+					
+				$sid = $request['staffserviceid'][$i];
+				
+				if ($sid != "") {
+		
+					$fieldvalues = array('serviceid' => $assignservice,'stafflevelid' => $assignstafflevel);
+		
+					$cond	  = array('id' => $sid);
+					$this->dbBean->UpdateRows('staffservices', $fieldvalues, $cond);
+				} else {
+					$fieldvalues = array('staffid'=>$id ,'serviceid' => $assignservice,'stafflevelid' => $assignstafflevel);
+					
+					$this->dbBean->InsertRow('staffservices', $fieldvalues);
+				}
+				
+			}
+		}
+		
+		$deletehdnarr = explode(",", $request['hdndelete']);
+		if (count($deletehdnarr) > 0) {
+			for($t=0;$t<=count($deletehdnarr);$t++)
+			{
+				$cond= array("id" => $deletehdnarr[$t]);
+				$deleted=$this->dbBean->DeleteRows("staffservices", $cond);
+			}
 		}
 		
 		return $updated;
@@ -190,6 +222,22 @@ class Staff {
 		$query="SELECT * FROM stafflevel where is_deleted=0 order by id asc";
 	
 		if (!$dbBean->QueryArray($query)) $dbBean->Kill();
+		if ($dbBean->RowCount()>0)
+		{
+			$resultarray = $dbBean->RecordsArray(MYSQLI_ASSOC);
+		}
+		return $resultarray;
+	}
+	
+	public static function getStaffservicesbyStaffid($id)
+	{
+		$resultarray=array();
+		global $dbBean;
+	
+		$query="SELECT * FROM staffservices where staffid=".intval($id);
+	
+		$w = $dbBean->QueryArray($query);
+		
 		if ($dbBean->RowCount()>0)
 		{
 			$resultarray = $dbBean->RecordsArray(MYSQLI_ASSOC);

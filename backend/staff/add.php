@@ -18,13 +18,7 @@
 <!-- BEGIN PAGE LEVEL STYLES -->
 
 <link rel="stylesheet" type="text/css" href="<?php echo ADMIN_URL;?>/assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
-
-<style>
-.nopadding{ padding-left:0px;} 
-.divpadding{padding-bottom:40px;} 
-.a_padding{padding:5px;}
-</style>
-
+<link rel="stylesheet" type="text/css" href="<?php echo ADMIN_URL;?>/assets/global/css/sandeep.css"/>
 <!-- END PAGE LEVEL STYLES -->
 <?php include('../common_second.php');?>
 </head>
@@ -189,7 +183,7 @@
                                 <div class="form-group">
                                     <label class="control-label col-md-3"></label>
                                     <div class="col-md-4">
-                                         <a href="#" onClick="javascript:fun_add();" title="Add">+ Add</a>  
+                                         <a href="javascript:void(0);" onClick="javascript:fun_add();" title="Add">+ Add</a>  
                                     </div>
                                 </div>
                                 
@@ -198,7 +192,6 @@
                                 <div class="row">
                                     <div class="col-md-offset-3 col-md-4">
                                     	<input type="hidden" name="FLAG" value="ADD_STAFF" />
-                                    	<input type="hidden" name="assignservicecnt" id="assignservicecnt" />
                                         <button type="submit" class="btn green">Submit</button>
                                         <button type="button" class="btn default" name="cancel" onClick="javascript: window.location.href='<?php echo ADMIN_URL;?>/staff/index.php'">Cancel</button>
                                     </div>
@@ -238,11 +231,8 @@ function fun_add()
 	var service = "assignservice"+cnt;
 	var staff = "stafflevel"+cnt;
 	var x = "divrow"+cnt;
-	$("#assignservicecnt").val(cnt);
-
-	//var d = "<?php //echo count($results);?>";
-	
-	var field = '<div id='+x+' class="divpadding"><div class="col-md-5 nopadding"><select name="assignservice[]" id='+service+' class="form-control"><option value="">Select Service</option> <?php $results=Staff::getServices(); if (count($results)>0) {	for ($index = 0; $index < count($results); $index++){ $rows = $results[$index]; ?> <option value="<?php echo $rows['id'];?>"><?php echo $rows['servicename'];?></option><?php }	} ?> </select></div><div class="col-md-6 nopadding"><select name="stafflevel[]" id='+staff+' class="form-control">	<option value="">Select Staff Level</option><?php $results=Staff::getStafflevel(); if (count($results)>0) { for ($index = 0; $index < count($results); $index++) { $rows = $results[$index];?><option value="<?php echo $rows['id'];?>"><?php echo $rows['name'];?></option><?php } } ?> </select></div><div class="col-md-1 a_padding"><a href="#" onclick="javascript: fun_deleterow('+cnt+');" title="Delete">Delete</a></div><div>';
+		
+	var field = '<div id='+x+' class="divpadding"><div class="col-md-5 nopadding"><select name="assignservice[]" id='+service+' class="form-control"><option value="">Select Service</option> <?php $results=Staff::getServices(); if (count($results)>0) {	for ($index = 0; $index < count($results); $index++){ $rows = $results[$index]; ?> <option value="<?php echo $rows['id'];?>"><?php echo $rows['servicename'];?></option><?php }	} ?> </select></div><div class="col-md-6 nopadding"><select name="stafflevel[]" id='+staff+' class="form-control">	<option value="">Select Staff Level</option><?php $results=Staff::getStafflevel(); if (count($results)>0) { for ($index = 0; $index < count($results); $index++) { $rows = $results[$index];?><option value="<?php echo $rows['id'];?>"><?php echo $rows['name'];?></option><?php } } ?> </select></div><div class="col-md-1 a_padding"><a href="javascript:void(0);" onclick="javascript: fun_deleterow('+cnt+');" title="Delete">Delete</a></div><div>';
 
 	$('#divadd').append(field);
 	cnt++;
@@ -291,10 +281,10 @@ var FormValidation = function () {
                     service:{
                         required:true
                     },
-                    service1:{
+                    "assignservice[]":{
                         required:true
                     },
-                    stafflevel1:{
+                    "stafflevel[]":{
                         required:true
                     }                    
                },

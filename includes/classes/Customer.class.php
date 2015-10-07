@@ -14,6 +14,12 @@ class Customer {
 		return $saved;
 	}
 	
+	public function addCustomertoken($fieldvalues)
+	{
+		$saved = $this->dbBean->InsertRow("customertoken", $fieldvalues);
+		return $saved;
+	}
+		
 	public function updateCustomer($fieldvalues, $cond)
 	{
 		$edited = $this->dbBean->UpdateRows("customer", $fieldvalues, $cond);
@@ -73,6 +79,22 @@ class Customer {
 		$cnt = $resultarray[0]['cnt'];
 		
 		return $cnt;
-	}	
+	}
+	
+	public static function getCustomertoken($token)
+	{
+		$resultarray=array();
+		global $dbBean;
+	
+		$query="SELECT * FROM customertoken where token='".$token."'";
+	
+		if (!$dbBean->QueryArray($query)) $dbBean->Kill();
+		if ($dbBean->RowCount()>0)
+		{
+			$resultarray = $dbBean->RecordsArray(MYSQLI_ASSOC);
+		}
+		return $resultarray;
+	
+	}
 }
 ?>

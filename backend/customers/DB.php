@@ -57,8 +57,35 @@
 		}
 		
 		$fieldvalues = array('name' => $_REQUEST['name'], 'email' => $_REQUEST['emailid'], 'contactno'=> $_REQUEST['contactno'], "address" => $_REQUEST['address'], "studentcardno" => $_REQUEST['studentcardno'],"status" => $_REQUEST['status'], "remark" => $_REQUEST['remark'], "credit" => $_REQUEST['credit'],"is_deleted" =>0, "registerdate" => date('Y-m-d H:i:s'));
-						
+		
 		$updated = $Customer->addCustomer($fieldvalues);
+		
+		if ($updated) {
+			$token = md5($updated.$_REQUEST['emailid']);
+			$fieldvalues1 = array("customerid" => $updated,"token" => $token,"date_added" => date('Y-m-d H:i:s'));
+			$ctoken = $Customer->addCustomertoken($fieldvalues1);
+		}	
+		
+	    $mail = new PHPMailer();
+		$mail->IsSMTP(); // telling the class to use SMTP
+		$mail->Host       = "smtp.gmail.com"; // SMTP server
+		$mail->SMTPDebug  =1;
+		$mail->SMTPAuth   = true;
+		$mail->Port = 587;
+		$mail->SMTPSecure = 'tls';
+		$mail->Username   = SMPT_EMAIL; // SMTP account username
+		$mail->Password   = SMPT_PASS;        // SMTP account password
+		$mail->SetFrom(SMPT_EMAIL, 'H-Kore');
+		$mail->AddReplyTo(SMPT_EMAIL, 'H-Kore');
+		$mail->Subject ="Set password link";//this is used to intialte subject of the mail
+		
+		$msg="Hello ".$_REQUEST['name']."<br/><br/>";
+		$msg.="Set password link : <a href='".SITE_URL."setpwd.php?token=".$token."'>set password</a><br/><br/>";
+		$mail->MsgHTML($msg);
+		
+		$mail->AddAddress('nirmalaparmar29@gmail.com');//$_REQUEST['emailaddress']
+		if(!$mail->Send()){$mail->ErrorInfo;}
+		$mail->ClearAddresses();
 		
 		if ($updated){			
 			$general->addLogAction($_SESSION['adm_user_id'],'Added', $updated, 'Customer Management', $_SESSION['adm_status']);
@@ -225,5 +252,21 @@
 		$general->redirectUrl($url,$error);
 		exit;
 	}	
+	/*********************************************************************************************************/
+	if ($_REQUEST['FLAG']=='SETPWD'){
+	
+		$cond		= array("id" => $_REQUEST['id']);
+		$fieldvalues = array('password'=>md5($_REQUEST['password']));
+		$updated = $dbBean->UpdateRows("customer", $fieldvalues, $cond);
+	
+		if ($updated){
+			$error  ='Password successfully changed.';
+		}else{
+			$error  ='Error changing password.';
+		}
+	
+		echo $error;
+		exit;
+	}
 	/*********************************************************************************************************/
 ?>

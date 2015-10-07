@@ -18,6 +18,7 @@
 <!-- BEGIN PAGE LEVEL STYLES -->
 
 <link rel="stylesheet" type="text/css" href="<?php echo ADMIN_URL;?>/assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+<link rel="stylesheet" type="text/css" href="<?php echo ADMIN_URL;?>/assets/global/css/sandeep.css"/>
 
 <!-- END PAGE LEVEL STYLES -->
 <?php include('../common_second.php');?>
@@ -107,9 +108,46 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Price<span class="required" aria-required="true">*</span></label>
+                                    <label class="control-label col-md-3">Normal Price<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Price" name="price" id="price" value="" />    
+                                         <input type="text" class="form-control" placeholder="Normal Price" name="price" id="price" value="" />    
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Staff Level Price</label>                                    
+	                                    <div class="col-md-4" id="divadd">
+	                                    	<div id='divrow1' class="divpadding">		                                    	
+			                                   <div class="col-md-6 nopadding">
+				                                    <select name="stafflevel[]" id="stafflevel1" class="form-control">
+			                                    		<option value="">Select Staff Level</option>
+				                                    	<?php
+				                                    	$staffresults=Service::getStafflevel();
+				                                    	
+				                                    	if (count($staffresults)>0) {
+				                                    		for ($index = 0; $index < count($staffresults); $index++)
+				                                    		{
+				                                    			$rows = $staffresults[$index];
+				                                    			?>
+				                                    			<option value="<?php echo $rows['id'];?>"><?php echo $rows['name'];?></option>
+				                                    			<?php 
+				                                    		}
+				                                    	}                                    	
+				                                    	?>                                    		
+				                                    </select>    
+			                                    </div>			                                    
+			                                    <div class="col-md-5 nopadding">
+			                                    	<input type="text" class="form-control" placeholder="Price" name="levelprice[]" id="levelprice1" value="" />
+			                                    </div>			                                    
+			                                    <div class="col-md-1 a_padding"></div>	
+			                                 </div>	                                     
+	                                    </div>  
+                                 </div>
+                                
+                                <div class="form-group">
+                                    <label class="control-label col-md-3"></label>
+                                    <div class="col-md-4">
+                                         <a href="javascript:void(0);" onClick="javascript:fun_add();" title="Add">+ Add</a>  
                                     </div>
                                 </div>
                                 
@@ -187,6 +225,24 @@ jQuery(document).ready(function() {
    Layout.init(); // init current layout
    FormValidation.init();
 });
+
+var cnt = 2;
+function fun_add()
+{
+	var stafflevel = "stafflevel"+cnt;
+	var levelprice = "levelprice"+cnt;
+	var x = "divrow"+cnt;
+		
+	var field = '<div id='+x+' class="divpadding"><div class="col-md-6 nopadding"><select name="stafflevel[]" id='+stafflevel+' class="form-control"><option value="">Select Staff Level</option> <?php $staffresults=Service::getStafflevel(); if (count($staffresults)>0) { for ($index = 0; $index < count($staffresults); $index++){ $rows = $staffresults[$index];?> <option value="<?php echo $rows['id'];?>"><?php echo $rows['name'];?></option><?php } }?> </select> </div> <div class="col-md-5 nopadding"> <input type="text" class="form-control" placeholder="Price" name="levelprice[]" id='+levelprice+' value="" /></div><div class="col-md-1 a_padding"><a href="javascript:void(0);" onclick="javascript: fun_deleterow('+cnt+');" title="Delete">Delete</a></div></div>';
+
+	$('#divadd').append(field);
+	cnt++;
+}
+
+function fun_deleterow(a)
+{
+	$('#divrow'+a).remove();
+}
 
 var FormValidation = function () {
 

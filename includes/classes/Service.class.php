@@ -14,6 +14,26 @@ class Service {
 		return $saved;
 	}
 	
+	public function addStafflevelprice($fieldvalues)
+	{
+		$saved = $this->dbBean->InsertRow("stafflevelprice", $fieldvalues);
+		return $saved;
+	}
+	
+	public function updateStafflevelprice($fieldvalues,$cond)
+	{
+		$saved = $this->dbBean->UpdateRows("stafflevelprice", $fieldvalues,$cond);
+		return $saved;
+	}
+	
+	public function deleteStafflevelprice($id)
+	{		
+		$cond= array("id" => intval($id));
+		
+		$deleted=$this->dbBean->DeleteRows("stafflevelprice", $cond);
+		return $deleted;
+	}
+	
 	public function updateService($fieldvalues, $cond)
 	{
 		$edited = $this->dbBean->UpdateRows("services", $fieldvalues, $cond);
@@ -65,5 +85,37 @@ class Service {
 		}
 		return $resultarray;
 	}
+	
+	public static function getStafflevel()
+	{
+		$resultarray=array();
+		global $dbBean;
+	
+		$query="SELECT * FROM stafflevel where is_deleted=0 order by id asc";
+	
+		if (!$dbBean->QueryArray($query)) $dbBean->Kill();
+		if ($dbBean->RowCount()>0)
+		{
+			$resultarray = $dbBean->RecordsArray(MYSQLI_ASSOC);
+		}
+		return $resultarray;
+	}
+	
+	public static function getStafflevelpricebyserviceid($id)
+	{
+		$resultarray=array();
+		global $dbBean;
+	
+		$query="SELECT * FROM stafflevelprice where serviceid=".intval($id);
+	
+		$w = $dbBean->QueryArray($query);
+	
+		if ($dbBean->RowCount()>0)
+		{
+			$resultarray = $dbBean->RecordsArray(MYSQLI_ASSOC);
+		}
+		return $resultarray;
+	}
+	
 }
 ?>
