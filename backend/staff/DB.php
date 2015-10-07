@@ -5,9 +5,8 @@
 	$Staff = new Staff($dbBean);
 
 	if ($_REQUEST['FLAG']=='ADD_STAFF')
-	{			
-		if (trim($_REQUEST['name'])=="")
-		{
+	{	
+		if (trim($_REQUEST['name'])=="") {
 			$_SESSION['msg']='Please enter name';
 			$num='danger';
 			$url= ADMIN_URL."/staff/add.php";
@@ -15,8 +14,7 @@
 		    exit;
 		}
 						
-		if($_FILES['staffimg']['name'] == "")
-		{
+		if($_FILES['staffimg']['name'] == "") {
 			$_SESSION['msg']='Please select image';
 			$num='danger';
 			$url= ADMIN_URL."/staff/add.php";
@@ -24,8 +22,7 @@
 			exit;
 		}
 		
-		if(trim($_REQUEST['contactno'])=="")
-		{
+		if(trim($_REQUEST['contactno'])=="") {
 			$_SESSION['msg']='Please enter contact no';
 			$num='danger';
 			$url= ADMIN_URL."/staff/add.php";
@@ -43,8 +40,7 @@
 				exit;
 			}			
 		}
-		if(trim($_REQUEST['emailaddress'])=="")
-		{
+		if(trim($_REQUEST['emailaddress'])=="")	{
 			$_SESSION['msg']='Please enter email address';
 			$num='danger';
 			$url= ADMIN_URL."/staff/add.php";
@@ -61,8 +57,7 @@
 			}
 		}
 		
-		if (trim($_REQUEST['address'])=="")
-		{
+		if (trim($_REQUEST['address'])=="")	{
 			$_SESSION['msg']='Please enter address';
 			$num='danger';
 			$url= ADMIN_URL."/staff/add.php";
@@ -70,8 +65,7 @@
 			exit;
 		}
 		
-		if (trim($_REQUEST['service'])=="")
-		{
+		if (trim($_REQUEST['service'])=="")	{
 			$_SESSION['msg']='Please select services';
 			$num='danger';
 			$url= ADMIN_URL."/staff/add.php";
@@ -79,6 +73,22 @@
 			exit;
 		}
 		
+		if ($_REQUEST['assignservice'][0] == "")	{
+			$_SESSION['msg']='Please select assign service';
+			$num='danger';
+			$url= ADMIN_URL."/staff/add.php";
+			$general->redirectUrl($url, $num);
+			exit;
+		}
+		
+		if ($_REQUEST['stafflevel'][0] == "") {
+			$_SESSION['msg']='Please select staff level';
+			$num='danger';
+			$url= ADMIN_URL."/staff/add.php";
+			$general->redirectUrl($url, $num);
+			exit;
+		}
+				
 		$resizeImage = new ResizeImage();
 		
 		if( $Staff->addStaffmember($resizeImage, TEMP_STORAGE, UPLOAD_PATH.STAFF_LARGE_IMG, STAFF_WIDTH, STAFF_HEIGHT, UPLOAD_PATH.STAFF_THUMB_IMG, STAFF_IMG_THUMB_WIDTH, STAFF_IMG_THUMB_HEIGHT, $_REQUEST) )
@@ -99,7 +109,7 @@
 	/*********************************************************************************************************/
 	
 	if($_REQUEST['FLAG']=='EDIT_STAFF')
-	{		
+	{					
 		if (trim($_REQUEST['name'])=="")
 		{
 			$_SESSION['msg']='Please enter name';
@@ -171,6 +181,24 @@
 		
 		if (trim($_REQUEST['service'])=="") {
 			$_SESSION['msg']='Please select services';
+			$num='danger';
+			$num.='&id='.$_REQUEST['id'];
+			$url= ADMIN_URL."/staff/edit.php";
+			$general->redirectUrl($url, $num);
+			exit;
+		}
+		
+		if ($_REQUEST['assignservice'][0] == "")	{
+			$_SESSION['msg']='Please select assign service';
+			$num='danger';
+			$num.='&id='.$_REQUEST['id'];
+			$url= ADMIN_URL."/staff/edit.php";
+			$general->redirectUrl($url, $num);
+			exit;
+		}
+		
+		if ($_REQUEST['stafflevel'][0] == "") {
+			$_SESSION['msg']='Please select staff level';
 			$num='danger';
 			$num.='&id='.$_REQUEST['id'];
 			$url= ADMIN_URL."/staff/edit.php";

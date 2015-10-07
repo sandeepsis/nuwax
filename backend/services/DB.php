@@ -102,9 +102,23 @@
 			}
 		}
 		
+		
 		$fieldvalues = array('servicecatid' => $_REQUEST['servicecat'],'servicename' => $_REQUEST['servicename'], 'price' => $_REQUEST['price'], 'servicetime'=> $_REQUEST['servicetime'], "description" => $_REQUEST['description'], "taxname" => $_REQUEST['taxname'],"taxapplicable" => $_REQUEST['taxper'], "tax_underpackage" => $_REQUEST['taxunderpackage'],"is_deleted" => '0', "date_added" => date('Y-m-d H:i:s'));
 						
-		$updated = $Service->addService($fieldvalues);
+	    $updated = $Service->addService($fieldvalues);
+			
+	    if (count($_REQUEST['stafflevel']) > 0) {
+			for($i=0;$i<=count($_REQUEST['stafflevel']);$i++)
+			{
+				if ($_REQUEST['stafflevel'][$i] !="" && $_REQUEST['levelprice'][$i] != "") {
+					$staff_level= $_REQUEST['stafflevel'][$i];
+					$level_price = $_REQUEST['levelprice'][$i];
+						
+					$fieldvalues1	= array('serviceid'=>$updated,'stafflevelid'=>$staff_level,'price'=>$level_price);
+					$Service->addStafflevelprice($fieldvalues1); 
+				}
+			}
+	    }
 		
 		if ($updated){			
 			$general->addLogAction($_SESSION['adm_user_id'],'Added', $updated, 'Service Management', $_SESSION['adm_status']);
@@ -236,6 +250,42 @@
 		
 		$updated =$Service->updateService($fieldvalues, $cond);
 
+		if (count($_REQUEST['stafflevel']) > 0) {
+			if ($_REQUEST['stafflevel'][0] != "") {
+				for($i=0;$i<=count($_REQUEST['stafflevel']);$i++)
+				{
+					if ($_REQUEST['stafflevel'][$i] !="" && $_REQUEST['levelprice'][$i] != "") {
+						$staff_level= $_REQUEST['stafflevel'][$i];
+						$level_price = $_REQUEST['levelprice'][$i];
+			
+						$sid = $_REQUEST['stafflevelpriceid'][$i];
+						
+						if ($sid != "") {
+							$fieldvalues1	= array('stafflevelid'=>$staff_level,'price'=>$level_price);
+							$cond1	  = array('id' => $sid);
+												
+							$Service->updateStafflevelprice($fieldvalues1,$cond1);
+						} else {
+							
+							$fieldvalues1	= array('serviceid'=>$_REQUEST['id'],'stafflevelid'=>$staff_level,'price'=>$level_price);
+							$Service->addStafflevelprice($fieldvalues1);						
+						}
+					}
+				}
+			}
+		}
+		
+		$deletehdnarr = explode(",", $_REQUEST['hdndelete']);
+		
+		if (count($deletehdnarr) > 0) {
+			for($t=0;$t<=count($deletehdnarr);$t++)
+			{				
+				$cond2= $deletehdnarr[$t];
+				
+				$Service->deleteStafflevelprice($cond2);	
+			}
+		}
+	
 		if ($updated) 
 		{
 				$general->addLogAction($_SESSION['adm_user_id'], 'Edited', $_REQUEST['id'], 'Service Management', $_SESSION['adm_status']);

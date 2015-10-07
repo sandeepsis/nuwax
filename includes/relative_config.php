@@ -6,8 +6,8 @@
 	/*   URL definitions */
 	define('SITE_FOLDER','nuwax');
 	define('ADMIN_FOLDER','backend');
-	//define('SERVER_URL','http://salil-pc/');
-	define('SERVER_URL','http://wl02/sis/');
+	define('SERVER_URL','http://salil-pc/');
+	//define('SERVER_URL','http://wl02/sis/');
 	
 	define('PROVIDER_URL','http://karmatechnologies.asia/');
 	define('SITE_URL',SERVER_URL.SITE_FOLDER.'/');   
@@ -41,6 +41,6 @@
 	define('STAFF_THUMB_IMG', STAFF.'thumb/');
 	
 	/* mail constants */
-	define("SMPT_EMAIL", "youruser@gmail.com");
+	define("SMPT_EMAIL", "youremail@gmail.com");
 	define("SMPT_PASS", "yourpassword");
 ?>
