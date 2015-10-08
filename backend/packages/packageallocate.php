@@ -2,12 +2,11 @@
 	include_once('config.php');
 	include_once('../checkAdminPagePermissions.php'); 
 	$dbBean	= new DatabaseBean();
-	$general = new General($dbBean);
+	$general= new General($dbBean);
 	$menu_id	= (empty($_REQUEST['menu_id'])?$_SESSION['menu_id']:$_REQUEST['menu_id']);
 	$heading	= $general->getPageHeading($menu_id);
-	$Customer 	= new Customer($dbBean);
-	$rows 		= $Customer->getCustomerById($_REQUEST['id']);
-	
+	$Package 	= new Package($dbBean);
+	$myrows 	= $Package->getPackageById($_REQUEST['id']);
 ?>
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
@@ -22,7 +21,6 @@
 
 <link rel="stylesheet" type="text/css" href="<?php echo ADMIN_URL;?>/assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
 <link rel="stylesheet" type="text/css" href="<?php echo ADMIN_URL;?>/assets/global/css/dhtmlxcalendar.css">
-
 <!-- END PAGE LEVEL STYLES -->
 <?php include('../common_second.php');?>
 </head>
@@ -61,7 +59,7 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="icon-equalizer font-red-sunglo"></i>
-                            <span class="caption-subject font-red-sunglo bold uppercase">Edit Details</span>
+                            <span class="caption-subject font-red-sunglo bold uppercase">Add Details</span>
                         </div>
                     </div>
                     <div class="portlet-body form">
@@ -71,92 +69,106 @@
                             <div class="alert alert-<?php echo $_REQUEST['msg'];?> fade in">
                             <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
                                  <?php		
-                                      echo $_SESSION['msg'];
-                                      unset($_SESSION['msg']);
+                                            echo $_SESSION['msg'];
+                                            unset($_SESSION['msg']);
                                 ?>
                             </div>
               			<?php		
                             }
                        ?>
                         <!-- BEGIN FORM-->
-                        
-                        <form id="frmcustomer" name="frmcustomer" method="post" action="<?php echo ADMIN_URL;?>/customers/DB.php" class="form-horizontal">
-                            <div class="form-body">           
+                        <form id="frmpackageallocate" name="frmpackageallocate" method="post" action="<?php echo ADMIN_URL;?>/packages/DB.php" class="form-horizontal">
+                            <div class="form-body">                            	 
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Name<span class="required" aria-required="true">*</span></label>
+                                    <label class="control-label col-md-3">Customer<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Name" name="name" id="name" value="<?php echo stripslashes($rows->name); ?>"/>    
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-md-3">Email Address<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Email Id" name="emailid" id="emailid" value="<?php echo stripslashes($rows->email); ?>" />    
+                                    	<select id="customer" name="customer" class="form-control">
+                                    		<option value="">Select Customer</option>
+                                    		<?php
+	                                    	$results=Package::getCustomers();
+	                                    	
+	                                    	if (count($results)>0) {
+	                                    		for ($index = 0; $index < count($results); $index++)
+	                                    		{
+	                                    			$rows = $results[$index];
+	                                    			?>
+	                                    			<option value="<?php echo $rows['id'];?>"><?php echo $rows['name'];?></option>
+	                                    			<?php 
+	                                    		}
+	                                    	}                                    	
+	                                    	?>        
+										</select>                                        
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Contact No</label>
+                                    <label class="control-label col-md-3">Payment Type<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Contact No" name="contactno" id="contactno" value="<?php echo stripslashes($rows->contactno); ?>" />    
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="control-label col-md-3">Address</label>
-                                    <div class="col-md-4">
-                                         <textarea class="form-control" placeholder="Address" name="address" id="address"><?php echo stripslashes($rows->address); ?></textarea>
+                                    	<select id="paymenttype" name="paymenttype" onchange="javascript: fun_paymenttype(this.value);" class="form-control">
+                                    		<option value="0">Cash</option>
+                                    		<option value="1">Cheque</option>
+                                    		<option value="2">Other</option>	                                    	        
+										</select>                                        
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Student Card No</label>
+                                    <label class="control-label col-md-3">Amount<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Student Card No" name="studentcardno" id="studentcardno" value="<?php echo stripslashes($rows->studentcardno); ?>" />    
+                                         <input type="text" class="form-control" placeholder="Amount" readonly name="amount" id="amount" value="<?php echo $myrows->cost;?>"/>    
                                     </div>
                                 </div>
-                                
-                                <div class="form-group" id="divcpmy">
-                                    <label class="control-label col-md-3">Student Card Validity</label>
+                                <div class="form-group" id="divbank">
+                                    <label class="control-label col-md-3">Bank Name<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Student Card Validity" name="studentcardvalidity" id="studentcardvalidity" value="<?php echo stripslashes($rows->studentcardvalidity); ?>" />    
+                                         <input type="text" class="form-control" placeholder="Bank Name" name="bank" id="bank" value="" />    
+                                    </div>
+                                </div>                                
+                                <div class="form-group" id="divinsname">
+                                    <label class="control-label col-md-3">Instrument Name<span class="required" aria-required="true">*</span></label>
+                                    <div class="col-md-4">
+                                         <input type="text" class="form-control" placeholder="Instrument Name" name="instrumentname" id="instrumentname" value="" />    
                                     </div>
                                 </div>
-                                                                                               
+                                <div class="form-group" id="divinsno">
+                                    <label class="control-label col-md-3">Instrument No<span class="required" aria-required="true">*</span></label>
+                                    <div class="col-md-4">
+                                         <input type="text" class="form-control" placeholder="Instrument No" name="instrumentno" id="instrumentno" value="" />    
+                                    </div>
+                                </div>
+                                <div class="form-group" id="divcheque">
+                                    <label class="control-label col-md-3">Cheque Amount<span class="required" aria-required="true">*</span></label>
+                                    <div class="col-md-4">
+                                         <input type="text" class="form-control" placeholder="Cheque Amount" name="chequeamount" id="chequeamount" value="" />    
+                                    </div>
+                                </div>
+                                <div class="form-group" id="divcheqdate">
+                                    <label class="control-label col-md-3">Cheque Date<span class="required" aria-required="true">*</span></label>
+                                    <div class="col-md-4">
+                                         <input type="text" class="form-control" placeholder="Cheque Date" name="chequedate" id="chequedate" value="" />    
+                                    </div>
+                                </div>
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Credit</label>
+                                    <label class="control-label col-md-3">Allocation Date<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Credit" name="credit" id="credit" value="<?php echo stripslashes($rows->credit); ?>" />    
+                                         <input type="text" class="form-control" placeholder="Allocation Date" name="allocationdate" id="allocationdate" value="" />    
                                     </div>
                                 </div>
-                                
                                 <div class="form-group">
                                     <label class="control-label col-md-3">Remark</label>
                                     <div class="col-md-4">
-                                         <textarea class="form-control" placeholder="Remark" name="remark" id="remark"><?php echo stripslashes($rows->remark); ?></textarea>    
+                                         <textarea class="form-control" placeholder="Remark" name="remark" id="remark"></textarea>    
                                     </div>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label class="col-md-3 control-label">Status<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
-                                    	<select name="status" id="status" class="form-control form-filter input-sm">    
-                                         	<option value="0" <?php if ($rows->status == 0) {echo "selected=selected";}?>>Active</option>
-                                         	<option value="1" <?php if ($rows->status == 1) {echo "selected=selected";}?>>Inactive</option>                                         	
-                                         </select>
-                                    </div>
-                                </div>
-
-
+                                </div>                                
+                                	
                             </div>
                             <div class="form-actions">
                                 <div class="row">
                                     <div class="col-md-offset-3 col-md-4">
-                                    	<input type="hidden" name="FLAG" value="EDIT_CUSTOMER" />
-                                    	<input type="hidden" name="statusflag" value="<?php echo $rows->status;?>" />
-                                        <input name="id" type="hidden" value="<?php echo $_REQUEST['id'];?>" />                                        
+                                    	<input type="hidden" name="FLAG" value="ALLOCATE_PACKAGE" />
+                                    	<input name="id" type="hidden" value="<?php echo $_REQUEST['id'];?>" />
                                         <button type="submit" class="btn green">Submit</button>
-                                        <button type="button" class="btn default" name="cancel" onClick="javascript: window.location.href='<?php echo ADMIN_URL;?>/customers/index.php'">Cancel</button>
+                                        <button type="button" class="btn default" name="cancel" onClick="javascript: window.location.href='<?php echo ADMIN_URL;?>/packages/index.php'">Cancel</button>
                                     </div>
                                 </div>
                             </div>
@@ -171,28 +183,56 @@
 	</div>
 	<!-- END CONTENT -->
 </div>
+
 <!-- END CONTAINER -->
 <?php include_once("../scripts.php"); ?>
-<!-- BEGIN PAGE LEVEL PLUGINS -->
+
 <script type="text/javascript" src="<?php echo ADMIN_URL;?>/assets/global/plugins/jquery-validation/js/jquery.validate.min.js"></script>
 <script type="text/javascript" src="<?php echo  ADMIN_URL;?>/assets/global/scripts/dhtmlxcalendar.js"></script>
 
-<!-- END PAGE LEVEL PLUGINS -->
 <script>
 var myCalendar;
 function doOnLoad() {
-	myCalendar = new dhtmlXCalendarObject(["studentcardvalidity"]);
+	myCalendar = new dhtmlXCalendarObject(["allocationdate"]);
 	myCalendar.hideTime();
-	myCalendar.setDateFormat("%Y-%m-%d");
+	myCalendar.setDateFormat("%Y-%m-%d %H:%i:%s");
+	
+
+	myCalendar1 = new dhtmlXCalendarObject(["chequedate"]);
+	myCalendar1.hideTime();
+	myCalendar1.setDateFormat("%Y-%m-%d");
 }
 
-jQuery(document).ready(function() {  
+jQuery(document).ready(function() {    
 	doOnLoad();
+	
    Metronic.init(); // init metronic core components
    Layout.init(); // init current layout
    FormValidation.init();
 
+   var paytype = $("#paymenttype").val();
+   fun_paymenttype(paytype);
 });
+
+function fun_paymenttype(paytype)
+{
+	  if(paytype == 0)
+	  {
+		  $("#divbank").hide();
+		  $("#divinsname").hide();
+		  $("#divinsno").hide();
+		  $("#divcheque").hide();
+		  $("#divcheqdate").hide();
+	  }
+	  else
+	  {
+		  $("#divbank").show();
+		  $("#divinsname").show();
+		  $("#divinsno").show();
+		  $("#divcheque").show();
+		  $("#divcheqdate").show();
+	  }
+}
 
 var FormValidation = function () {
 
@@ -201,34 +241,72 @@ var FormValidation = function () {
         // for more info visit the official plugin documentation: 
         // http://docs.jquery.com/Plugins/Validation
 
-            var form3 = $('#frmcustomer');
+            var form3 = $('#frmpackageallocate');
             var error3 = $('.alert-danger', form3);
             var success3 = $('.alert-success', form3);
-
+			
             form3.validate({
                 errorElement: 'span', //default input error message container
                 errorClass: 'help-block help-block-error', // default input error message class
                 focusInvalid: false, // do not focus the last invalid input
                 ignore: "", // validate all fields including form hidden input
-                rules: {
-                	name: {
+                rules: {                	
+                	customer: {
                         required: true
-                    },                    
-                    emailid: {
-                        required: true,
-                        email: true
                     },
-    		        contactno: {                        
-                        required: true,
+        		    bank: {
+        		    	required: function(element) {
+                            if ($('#paymenttype').val() == 0) {
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        }
+                    }, 
+                    instrumentname: {
+                    	required: function(element) {
+                            if ($('#paymenttype').val() == 0) {
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        }
+                    },
+                    instrumentno: {                        
+                    	required: function(element) {
+                            if ($('#paymenttype').val() == 0) {
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        },
                         number: true
                     },
-    		        address: {
-        		        required: true
-        		        }
-                },
+                    chequeamount: {                        
+                    	required: function(element) {
+                            if ($('#paymenttype').val() == 0) {
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        },
+                        number: true
+                    },
+                    chequedate: {
+                    	required: function(element) {
+                            if ($('#paymenttype').val() == 0) {
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        }
+                    },     
+                    allocationdate: {                        
+                        required: true
+                    }
+               },
 
-                messages: { // custom messages for radio buttons and checkboxes
-                    
+                messages: { 
                 },
 
                 errorPlacement: function (error, element) { // render error placement for each input type
@@ -278,9 +356,6 @@ var FormValidation = function () {
 
             });
 
-            $('.date-picker .form-control').change(function() {
-                form3.validate().element($(this)); //revalidate the chosen dropdown value and show error or success message for the input 
-            })
     }
 
 
@@ -288,7 +363,6 @@ var FormValidation = function () {
         //main function to initiate the module
         init: function () {
 		 handleValidation3();
-
         }
 
     };

@@ -125,94 +125,17 @@
 	                                </div>
 	                                
 	                                <div class="form-group">
-	                                    <label class="control-label col-md-3">Staff Level Price</label>                                    
-		                                    <div class="col-md-4" id="divadd">
-		                                    <input type="hidden" name="hdndelete" id="hdndelete" value=""/>
-		                                    <?php
-			                                $stafflevelpriceresult = Service::getStafflevelpricebyserviceid($_REQUEST['id']);
-			                                $scount = count($stafflevelpriceresult);
-			                                $c = 1;
-			                                if ($scount>0) {
-				                                for ($t = 0; $t < $scount; $t++)
-				                                {
-			                                    	$m_rows = $stafflevelpriceresult[$t];
-			                                    	$stafflevelid	= $m_rows['stafflevelid'];
-			                                    	$levelprice 	= $m_rows['price'];
-			                                    	$stafflevelpriceid	= $m_rows['id'];
-			                                   ?>	  
-		                                    	<div id='divrow<?php echo $c;?>' class="divpadding divmsglength">	
-		                                    	<input type="hidden" name="stafflevelpriceid[]" id="stafflevelpriceid" value="<?php echo $stafflevelpriceid;?>"/>		                                    	
-				                                   <div class="col-md-6 nopadding">
-					                                    <select name="stafflevel[]" id="stafflevel<?php echo $c;?>" class="form-control">
-				                                    		<option value="">Select Staff Level</option>
-					                                    	<?php
-					                                    	$staffresults=Service::getStafflevel();
-					                                    	
-					                                    	if (count($staffresults)>0) {
-					                                    		for ($index = 0; $index < count($staffresults); $index++)
-					                                    		{
-					                                    			$myrows = $staffresults[$index];
-					                                    			if ($myrows['id'] == $stafflevelid) {
-					                                    			?>
-                                    			                    	<option value="<?php echo $myrows['id'];?>" selected="selected"><?php echo $myrows['name'];?></option>                                    			                    	
-                                    			                    <?php 
-                                    							    } else {                                    							    
-					                                    			?>
-					                                    				<option value="<?php echo $myrows['id'];?>"><?php echo $myrows['name'];?></option>
-					                                    			<?php 
-                                    							    }
-					                                    		}
-					                                    	}                                    	
-					                                    	?>                                    		
-					                                    </select>    
-				                                    </div>			                                    
-				                                    <div class="col-md-5 nopadding">
-				                                    	<input type="text" class="form-control" placeholder="Price" name="levelprice[]" id="levelprice1" value="<?php echo $levelprice;?>" />
-				                                    </div>			                                    
-				                                    <div class="col-md-1 a_padding"><a href="javascript:void(0);" onclick="javascript: fun_deleterow(<?php echo $c;?>,<?php echo $stafflevelpriceid;?>);" title="Delete">Delete</a></div>	
-				                                 </div>
-				                                 <?php 
-			                                 $c++;
-			                                 	}
-			                                 } else {
-			                                 ?>
-			                                 	<div id='divrow1' class="divpadding divmsglength">	
-			                                 	<input type="hidden" name="stafflevelpriceid[]" id="stafflevelpriceid"/>	                                    	
-				                                   <div class="col-md-6 nopadding">
-					                                    <select name="stafflevel[]" id="stafflevel1" class="form-control">
-				                                    		<option value="">Select Staff Level</option>
-					                                    	<?php
-					                                    	$staffresults=Service::getStafflevel();
-					                                    	
-					                                    	if (count($staffresults)>0) {
-					                                    		for ($index = 0; $index < count($staffresults); $index++)
-					                                    		{
-					                                    			$myrows = $staffresults[$index];
-					                                    			?>
-					                                    			<option value="<?php echo $myrows['id'];?>"><?php echo $myrows['name'];?></option>
-					                                    			<?php 
-					                                    		}
-					                                    	}                                    	
-					                                    	?>                                    		
-					                                    </select>    
-				                                    </div>			                                    
-				                                    <div class="col-md-5 nopadding">
-				                                    	<input type="text" class="form-control" placeholder="Price" name="levelprice[]" id="levelprice1" value="" />
-				                                    </div>			                                    
-				                                    <div class="col-md-1 a_padding"></div>	
-				                                 </div>
-			                                 <?php 	
-			                                 }
-			                                 ?>		                                     
-		                                    </div> 
-	                                 </div>
+	                                    <label class="control-label col-md-3">Head Therapist Price</label>
+	                                    <div class="col-md-4">
+	                                         <input type="text" class="form-control" placeholder="Head Therapist Price" name="headtherapistprice" id="headtherapistprice" value="<?php echo stripslashes($rows->headtherapistprice); ?>" />    
+	                                    </div>
+	                                </div>
 	                                
 	                                <div class="form-group">
-	                                    <label class="control-label col-md-3"></label>
-	                                    <div class="col-md-1">
-	                                         <a href="javascript:void(0);" onClick="javascript:fun_add();" title="Add">+ Add</a>  
+	                                    <label class="control-label col-md-3">Senior Therapist Price<span class="required" aria-required="true">*</span></label>
+	                                    <div class="col-md-4">
+	                                         <input type="text" class="form-control" placeholder="Senior Therapist Price" name="seniortherapistprice" id="seniortherapistprice" value="<?php echo stripslashes($rows->seniortherapistprice); ?>" />    
 	                                    </div>
-	                                    <div class="col-md-3"><span class="diverror"  id="divmsg"></span></div>
 	                                </div>
 	                                
 	                                <div class="form-group">
@@ -293,37 +216,6 @@ jQuery(document).ready(function() {
 
 });
 
-var cnt = <?php echo $scount+1;?>;
-function fun_add()
-{
-	var stafflevel = "stafflevel"+cnt;
-	var levelprice = "levelprice"+cnt;
-	var x = "divrow"+cnt;
-		
-	var field = '<div id='+x+' class="divpadding divmsglength"><div class="col-md-6 nopadding"><select name="stafflevel[]" id='+stafflevel+' class="form-control"><option value="">Select Staff Level</option> <?php $staffresults=Service::getStafflevel(); if (count($staffresults)>0) { for ($index = 0; $index < count($staffresults); $index++){ $rows = $staffresults[$index];?> <option value="<?php echo $rows['id'];?>"><?php echo $rows['name'];?></option><?php } }?> </select> </div> <div class="col-md-5 nopadding"> <input type="text" class="form-control" placeholder="Price" name="levelprice[]" id='+levelprice+' value="" /></div><div class="col-md-1 a_padding"><a href="javascript:void(0);" onclick="javascript: fun_deleterow('+cnt+');" title="Delete">Delete</a></div></div>';
-
-	$('#divadd').append(field);
-
-	if ($(".divmsglength").length > '0') {
-    	$("#divmsg").html("");
-	}
-		
-	cnt++;
-}
-
-function fun_deleterow(a,b)
-{
-	var q;
-	if ($("#hdndelete").val() == "") {
-		q = $("#hdndelete").val(b);
-	}else{	
-		q = $("#hdndelete").val()+","+b;
-		$("#hdndelete").val(q);
-	}
-	
-	$('#divrow'+a).remove();
-}
-
 var FormValidation = function () {
 
     // advance validation
@@ -350,6 +242,10 @@ var FormValidation = function () {
     		        price: {                        
                         required: true,
                         number: true
+                    },
+                    seniortherapistprice: {
+                    	required: true,
+						number:true  
                     },
     		        servicetime: {
         		        required: true,
@@ -410,16 +306,7 @@ var FormValidation = function () {
                         .closest('.form-group').removeClass('has-error'); // set success class to the control group
                 },
 
-                submitHandler: function (form) {
-                	if ($(".divmsglength").length == '0') {
-                    	$("#divmsg").html("Please assign atleast one staff level price");
-                    	 return false;
-                	}
-                	else
-                	{
-                		$("#divmsg").html("");
-                	}
-                	
+                submitHandler: function (form) {                	
                     success3.show();
                     error3.hide();
                     form.submit(); // submit the form

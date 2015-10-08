@@ -51,8 +51,7 @@ class Customer {
 		if (! $resultarray = $dbBean->QuerySingleRow($query)) $dbBean->Kill();
 		return $resultarray;
 		
-	}
-	
+	}	
 	
 	public function deleteCustomer($fieldvalues,$cond)
 	{
@@ -87,8 +86,8 @@ class Customer {
 		global $dbBean;
 	
 		$query="SELECT * FROM customertoken where token='".$token."'";
-	
-		if (!$dbBean->QueryArray($query)) $dbBean->Kill();
+		$dbBean->QueryArray($query);
+		
 		if ($dbBean->RowCount()>0)
 		{
 			$resultarray = $dbBean->RecordsArray(MYSQLI_ASSOC);

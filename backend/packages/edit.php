@@ -131,14 +131,14 @@
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Service Discount (%)<span class="required" aria-required="true">*</span></label>
+                                    <label class="control-label col-md-3">Service Discount (%)</label>
                                     <div class="col-md-4">
                                          <input type="text" class="form-control" placeholder="Service Discount (%)" name="servicediscount" id="servicediscount" value="<?php echo stripslashes($rows->servicediscount); ?>" />    
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Product Discount (%)<span class="required" aria-required="true">*</span></label>
+                                    <label class="control-label col-md-3">Product Discount (%)</label>
                                     <div class="col-md-4">
                                          <input type="text" class="form-control" placeholder="Product Discount (%)" name="productdiscount" id="productdiscount" value="<?php echo stripslashes($rows->productdiscount); ?>"/>    
                                     </div>
@@ -227,16 +227,9 @@ var FormValidation = function () {
 						number:true        		        
         		    },
         		    serviceapplicable: {
-                        required: true
-                    }, 
-                    servicediscount: {                        
                         required: true,
-                        number: true
-                    },
-                    productdiscount: {                        
-                        required: true,
-                        number: true
-                    },
+                        needsSelection: true
+                    },                    
                     taxname: {
                         required: true
                     },     

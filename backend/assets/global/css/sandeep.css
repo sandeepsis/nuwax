@@ -9,6 +9,12 @@
 }
 
 
+.portlet-body  .help-block  
+{
+	color: #a94442 !important;
+}
+
+
 .nopadding > .help-block  
 {
 	color: #a94442 !important;

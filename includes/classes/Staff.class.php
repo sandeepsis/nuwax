@@ -14,8 +14,8 @@ class Staff {
 			return false;
 		}
 		
-		$fields	= array('serviceid','name','contactno', 'email','address','is_deleted', 'date_added');
-		$values	= array($request['service'],$request['name'], $request['contactno'],$request['emailaddress'],$request['address'],'0', date('Y-m-d H:i:s'));
+		$fields	= array('name','contactno', 'email','address','is_deleted', 'date_added');
+		$values	= array($request['name'], $request['contactno'],$request['emailaddress'],$request['address'],'0', date('Y-m-d H:i:s'));
 			
 		$staff_id = 0;
 		if ( ( $staff_id = $this->dbBean->InsertRow('staff', array_combine ( $fields, $values )) ) > 0 ) {
@@ -66,8 +66,8 @@ class Staff {
 			return false;
 		}
 		
-		$fields	= array('serviceid','name','contactno', 'email','address');
-		$values	= array($request['service'],$request['name'], $request['contactno'],$request['emailaddress'],$request['address']);
+		$fields	= array('name','contactno', 'email','address');
+		$values	= array($request['name'], $request['contactno'],$request['emailaddress'],$request['address']);
 		
 		$filename = $old_file_name;
 		if ( isset($_FILES['staffimg']['name']) && $_FILES['staffimg']['name'] != '' ) {
@@ -146,7 +146,7 @@ class Staff {
 		$resultarray=array();
 		global $dbBean;
 		
-		$query="SELECT *,(select servicename from services where id=serviceid) servicename FROM staff where is_deleted=0 order by id desc";
+		$query="SELECT * FROM staff where is_deleted=0 order by id desc";
 		
 		if (!$dbBean->QueryArray($query)) $dbBean->Kill();
 		if ($dbBean->RowCount()>0)

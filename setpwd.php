@@ -7,51 +7,66 @@
 	$token = $_GET['token'];
 	$allRows = Customer::getCustomertoken($token);
 	
-	$cid = $allRows[0]['customerid'];
 	
- ?>
- <div class="col-md-12">
-					<div class="portlet light bg-inverse">
-                    <div class="portlet-title">
-                        <div class="caption">
-                            <i class="icon-equalizer font-red-sunglo"></i>
-                            <span class="caption-subject font-red-sunglo bold uppercase">Set Password</span>
+if (count($allRows)) {
+	$cid = $allRows[0]['customerid'];
+?>
+
+<div class="col-md-12">
+	<div class="portlet light bg-inverse">
+    	<div class="portlet-title">
+        	<div class="caption">
+            	<i class="icon-equalizer font-red-sunglo"></i>
+                <span class="caption-subject font-red-sunglo bold uppercase">Set Password</span>
+            </div>
+        </div>
+        <div class="portlet-body form">
+        	<!-- BEGIN FORM-->
+            <form id="frmchngpwd" name="frmchngpwd" method="post" action="<?php echo ADMIN_URL;?>/customers/DB.php" class="form-horizontal">
+            	<div class="form-body">
+                	<div class="form-group">
+                    	<label class="col-md-3 control-label">Password<span class="required" aria-required="true">*</span></label>
+                        	<div class="col-md-4">
+                            	<input type="password" class="form-control" placeholder="Password" name="password" id="password" value="" data-required="1">
+                            </div>
+                    </div>
+                    <div class="form-group">
+                    	<label class="col-md-3 control-label">Repeat password<span class="required" aria-required="true">*</span></label>
+                        	<div class="col-md-4">
+                            	<input type="password" class="form-control" placeholder="Repeat Password" name="repassword" id="repassword" value="" data-required="1">
+                            </div>
+                    </div>
+                </div>                
+                <div class="form-actions">
+                	<div class="row">
+                    	<div class="col-md-offset-3 col-md-4">
+                        	<input type="hidden" name="FLAG" value="SETPWD" />
+                            <input name="id" id="id" type="hidden" value="<?php echo $cid;?>" />
+                            <button type="submit" class="btn default">Submit</button>
                         </div>
                     </div>
-                    <div class="portlet-body form">
-                        <!-- BEGIN FORM-->
-                        <form id="frmchngpwd" name="frmchngpwd" method="post" action="<?php echo ADMIN_URL;?>/customers/DB.php" class="form-horizontal">
-                            <div class="form-body">
-                                
-                                <div class="form-group">
-                                    <label class="col-md-3 control-label">Password<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
-                                            <input type="password" class="form-control" placeholder="Password" name="password" id="password" value="" data-required="1">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-3 control-label">Repeat password<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
-                                            <input type="password" class="form-control" placeholder="Repeat Password" name="repassword" id="repassword" value="" data-required="1">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-actions">
-                                <div class="row">
-                                    <div class="col-md-offset-3 col-md-4">
-                                       <input type="hidden" name="FLAG" value="SETPWD" />
-                                       <input name="id" id="id" type="hidden" value="<?php echo $cid;?>" />
-                                        <button type="submit" class="btn green">Submit</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                        <!-- END FORM-->
-                    </div>
                 </div>
-			</div>
-<?php include_once("/backend/scripts.php"); ?>
-<script type="text/javascript" src="<?php echo ADMIN_URL;?>/assets/global/plugins/jquery-validation/js/jquery.validate.min.js"></script>	
+            </form>
+            <!-- END FORM-->
+       </div>
+   </div>
+</div>
+
+<?php
+} else {
+	echo "Invalid user";
+}
+
+?>
+
+<link href="<?php echo ADMIN_URL;?>/assets/global/css/sandeep.css" rel="stylesheet" type="text/css"/>
+
+<script src="<?php echo ADMIN_URL;?>/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="<?php echo ADMIN_URL;?>/assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?php echo ADMIN_URL;?>/assets/global/plugins/jquery-validation/js/jquery.validate.min.js"></script>
+<script src="<?php echo ADMIN_URL;?>/assets/global/scripts/metronic.js" type="text/javascript"></script>
+<script src="<?php echo ADMIN_URL;?>/assets/admin/layout/scripts/layout.js" type="text/javascript"></script>
+
 <script>
 jQuery(document).ready(function() {    
 Metronic.init(); // init metronic core components

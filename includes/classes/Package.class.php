@@ -66,5 +66,25 @@ class Package {
 		return $resultarray;
 	}
 	
+	public static function getCustomers()
+	{
+		$resultarray=array();
+		global $dbBean;
+	
+		$query="SELECT * FROM customer where is_deleted=0 order by id desc";
+	
+		if (!$dbBean->QueryArray($query)) $dbBean->Kill();
+		if ($dbBean->RowCount()>0)
+		{
+			$resultarray = $dbBean->RecordsArray(MYSQLI_ASSOC);
+		}
+		return $resultarray;
+	}
+	
+	public function packageAllocation($fieldvalues)
+	{
+		$saved = $this->dbBean->InsertRow("packageallocation", $fieldvalues);
+		return $saved;
+	}
 }
 ?>
