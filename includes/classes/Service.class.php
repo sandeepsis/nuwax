@@ -13,27 +13,7 @@ class Service {
 		$saved = $this->dbBean->InsertRow("services", $fieldvalues);
 		return $saved;
 	}
-	
-	public function addStafflevelprice($fieldvalues)
-	{
-		$saved = $this->dbBean->InsertRow("stafflevelprice", $fieldvalues);
-		return $saved;
-	}
-	
-	public function updateStafflevelprice($fieldvalues,$cond)
-	{
-		$saved = $this->dbBean->UpdateRows("stafflevelprice", $fieldvalues,$cond);
-		return $saved;
-	}
-	
-	public function deleteStafflevelprice($id)
-	{		
-		$cond= array("id" => intval($id));
 		
-		$deleted=$this->dbBean->DeleteRows("stafflevelprice", $cond);
-		return $deleted;
-	}
-	
 	public function updateService($fieldvalues, $cond)
 	{
 		$edited = $this->dbBean->UpdateRows("services", $fieldvalues, $cond);

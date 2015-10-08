@@ -18,6 +18,7 @@
 <!-- BEGIN PAGE LEVEL STYLES -->
 
 <link rel="stylesheet" type="text/css" href="<?php echo ADMIN_URL;?>/assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+<link rel="stylesheet" type="text/css" href="<?php echo ADMIN_URL;?>/assets/global/css/dhtmlxcalendar.css">
 
 <!-- END PAGE LEVEL STYLES -->
 <?php include('../common_second.php');?>
@@ -111,6 +112,13 @@
                                     </div>
                                 </div>
                                 
+                                <div class="form-group" id="divcpmy">
+                                    <label class="control-label col-md-3">Student Card Validity</label>
+                                    <div class="col-md-4">
+                                         <input type="text" class="form-control" placeholder="Student Card Validity" name="studentcardvalidity" id="studentcardvalidity" value="" />    
+                                    </div>
+                                </div>
+                                
                                 <div class="form-group" id="divremail">
                                     <label class="control-label col-md-3">Credit</label>
                                     <div class="col-md-4">
@@ -159,14 +167,20 @@
 <?php include_once("../scripts.php"); ?>
 <!-- BEGIN PAGE LEVEL PLUGINS -->
 <script type="text/javascript" src="<?php echo ADMIN_URL;?>/assets/global/plugins/jquery-validation/js/jquery.validate.min.js"></script>
+<script type="text/javascript" src="<?php echo  ADMIN_URL;?>/assets/global/scripts/dhtmlxcalendar.js"></script>
 
 <!-- END PAGE LEVEL PLUGINS -->
-<!-- BEGIN PAGE LEVEL SCRIPTS -->
-
-
-<!-- END PAGE LEVEL SCRIPTS -->
 <script>
-jQuery(document).ready(function() {    
+var myCalendar;
+function doOnLoad() {
+	myCalendar = new dhtmlXCalendarObject(["studentcardvalidity"]);
+	myCalendar.hideTime();
+	myCalendar.setDateFormat("%Y-%m-%d");
+}
+
+jQuery(document).ready(function() {
+	doOnLoad();
+	
    Metronic.init(); // init metronic core components
    Layout.init(); // init current layout
    FormValidation.init();

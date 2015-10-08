@@ -56,41 +56,7 @@
 			$general->redirectUrl($url, $num);
 			exit;
 		}
-		
-		if (trim($_REQUEST['servicediscount'])=="")	{
-			$_SESSION['msg']='Please enter service discount (%)';
-			$num='danger';
-			$url= ADMIN_URL."/packages/add.php";
-			$general->redirectUrl($url, $num);
-			exit;
-		} else {
-			$pattern = '/^[0-9]+(?:\.[0-9]{0,2})?$/';
-			if (preg_match($pattern, trim($_REQUEST['servicediscount'])) == '0') {
-				$_SESSION['msg']='Please enter valid service discount (%).';
-				$num='danger';
-				$url= ADMIN_URL."/packages/add.php";
-				$general->redirectUrl($url, $num);
-				exit;
-			}
-		}
-		
-		if (trim($_REQUEST['productdiscount'])=="")	{
-			$_SESSION['msg']='Please enter product discount (%)';
-			$num='danger';
-			$url= ADMIN_URL."/packages/add.php";
-			$general->redirectUrl($url, $num);
-			exit;
-		} else {
-			$pattern = '/^[0-9]+(?:\.[0-9]{0,2})?$/';
-			if (preg_match($pattern, trim($_REQUEST['productdiscount'])) == '0') {
-				$_SESSION['msg']='Please enter valid product discount (%).';
-				$num='danger';
-				$url= ADMIN_URL."/packages/add.php";
-				$general->redirectUrl($url, $num);
-				exit;
-			}
-		}
-		
+				
 		if (trim($_REQUEST['taxname'])=="") {
 			$_SESSION['msg']='Please enter tax name';
 			$num='danger';
@@ -143,7 +109,8 @@
 		if (trim($_REQUEST['packagename'])=="")	{
 			$_SESSION['msg']='Please select package name';
 			$num='danger';
-			$url= ADMIN_URL."/packages/add.php";
+			$num.='&id='.$_REQUEST['id'];
+			$url= ADMIN_URL."/packages/edit.php";
 			$general->redirectUrl($url, $num);
 			exit;
 		}
@@ -151,7 +118,8 @@
 		if (trim($_REQUEST['cost'])=="") {
 			$_SESSION['msg']='Please enter cost';
 			$num='danger';
-			$url= ADMIN_URL."/packages/add.php";
+			$num.='&id='.$_REQUEST['id'];
+			$url= ADMIN_URL."/packages/edit.php";
 			$general->redirectUrl($url, $num);
 			exit;
 		} else {
@@ -159,7 +127,8 @@
 			if (preg_match($pattern, trim($_REQUEST['cost'])) == '0') {
 				$_SESSION['msg']='Please enter valid cost';
 				$num='danger';
-				$url= ADMIN_URL."/packages/add.php";
+				$num.='&id='.$_REQUEST['id'];
+				$url= ADMIN_URL."/packages/edit.php";
 				$general->redirectUrl($url, $num);
 				exit;
 			}
@@ -168,7 +137,8 @@
 		if (trim($_REQUEST['creditprovided'])=="") {
 			$_SESSION['msg']='Please enter credit';
 			$num='danger';
-			$url= ADMIN_URL."/packages/add.php";
+			$num.='&id='.$_REQUEST['id'];
+			$url= ADMIN_URL."/packages/edit.php";
 			$general->redirectUrl($url, $num);
 			exit;
 		} else {
@@ -176,7 +146,8 @@
 			if (preg_match($pattern, trim($_REQUEST['creditprovided'])) == '0') {
 				$_SESSION['msg']='Please enter valid credit';
 				$num='danger';
-				$url= ADMIN_URL."/packages/add.php";
+				$num.='&id='.$_REQUEST['id'];
+				$url= ADMIN_URL."/packages/edit.php";
 				$general->redirectUrl($url, $num);
 				exit;
 			}
@@ -187,49 +158,17 @@
 		if ($cnt==0) {
 			$_SESSION['msg']='Please select service for package';
 			$num='danger';
-			$url= ADMIN_URL."/packages/add.php";
+			$num.='&id='.$_REQUEST['id'];
+			$url= ADMIN_URL."/packages/edit.php";
 			$general->redirectUrl($url, $num);
 			exit;
 		}
-		
-		if (trim($_REQUEST['servicediscount'])=="")	{
-			$_SESSION['msg']='Please enter service discount (%)';
-			$num='danger';
-			$url= ADMIN_URL."/packages/add.php";
-			$general->redirectUrl($url, $num);
-			exit;
-		} else {
-			$pattern = '/^[0-9]+(?:\.[0-9]{0,2})?$/';
-			if (preg_match($pattern, trim($_REQUEST['servicediscount'])) == '0') {
-				$_SESSION['msg']='Please enter valid service discount (%).';
-				$num='danger';
-				$url= ADMIN_URL."/packages/add.php";
-				$general->redirectUrl($url, $num);
-				exit;
-			}
-		}
-		
-		if (trim($_REQUEST['productdiscount'])=="")	{
-			$_SESSION['msg']='Please enter product discount (%)';
-			$num='danger';
-			$url= ADMIN_URL."/packages/add.php";
-			$general->redirectUrl($url, $num);
-			exit;
-		} else {
-			$pattern = '/^[0-9]+(?:\.[0-9]{0,2})?$/';
-			if (preg_match($pattern, trim($_REQUEST['productdiscount'])) == '0') {
-				$_SESSION['msg']='Please enter valid product discount (%).';
-				$num='danger';
-				$url= ADMIN_URL."/packages/add.php";
-				$general->redirectUrl($url, $num);
-				exit;
-			}
-		}
-		
+				
 		if (trim($_REQUEST['taxname'])=="")	{
 			$_SESSION['msg']='Please enter tax name';
 			$num='danger';
-			$url= ADMIN_URL."/packages/add.php";
+			$num.='&id='.$_REQUEST['id'];
+			$url= ADMIN_URL."/packages/edit.php";
 			$general->redirectUrl($url, $num);
 			exit;
 		}
@@ -237,7 +176,8 @@
 		if (trim($_REQUEST['taxper'])=="") {
 			$_SESSION['msg']='Please enter tax (%)';
 			$num='danger';
-			$url= ADMIN_URL."/packages/add.php";
+			$num.='&id='.$_REQUEST['id'];
+			$url= ADMIN_URL."/packages/edit.php";
 			$general->redirectUrl($url, $num);
 			exit;
 		}
@@ -247,7 +187,8 @@
 			if (preg_match($pattern, trim($_REQUEST['taxper'])) == '0') {
 				$_SESSION['msg']='Please enter valid tax (%).';
 				$num='danger';
-				$url= ADMIN_URL."/packages/add.php";
+				$num.='&id='.$_REQUEST['id'];
+				$url= ADMIN_URL."/packages/edit.php";
 				$general->redirectUrl($url, $num);
 				exit;
 			}
@@ -328,4 +269,104 @@
 	}
 	/*********************************************************************************************************/	
 	
+	if ($_REQUEST['FLAG']=='ALLOCATE_PACKAGE') {
+		
+		if (trim($_REQUEST['customer'])=="") {
+			$_SESSION['msg']='Please select customer';
+			$num='danger';
+			$num.='&id='.$_REQUEST['id'];
+			$url= ADMIN_URL."/packages/packageallocate.php";
+			$general->redirectUrl($url, $num);
+			exit;
+		}
+		
+		if ($_REQUEST['paymenttype'] !="0") {			
+			if (trim($_REQUEST['bank'])=="") {
+				$_SESSION['msg']='Please enter bank name';
+				$num='danger';
+				$num.='&id='.$_REQUEST['id'];
+				$url= ADMIN_URL."/packages/packageallocate.php";
+				$general->redirectUrl($url, $num);
+				exit;
+			}
+		
+			if (trim($_REQUEST['instrumentname'])=="")	{
+				$_SESSION['msg']='Please enter instrument name';
+				$num='danger';
+				$num.='&id='.$_REQUEST['id'];
+				$url= ADMIN_URL."/packages/packageallocate.php";
+				$general->redirectUrl($url, $num);
+				exit;
+			}
+		
+			if (trim($_REQUEST['instrumentno'])=="")	{
+				$_SESSION['msg']='Please enter instrument no';
+				$num='danger';
+				$num.='&id='.$_REQUEST['id'];
+				$url= ADMIN_URL."/packages/packageallocate.php";
+				$general->redirectUrl($url, $num);
+				exit;
+			} else {
+				$pattern = '/^[0-9]+$/';
+				if (preg_match($pattern, trim($_REQUEST['instrumentno'])) == '0') {
+					$_SESSION['msg']='Please enter valid instrument no';
+					$num='danger';
+					$num.='&id='.$_REQUEST['id'];
+					$url= ADMIN_URL."/packages/packageallocate.php";
+					$general->redirectUrl($url, $num);
+					exit;
+				}
+			}
+					
+			if (trim($_REQUEST['chequeamount'])=="") {
+				$_SESSION['msg']='Please enter cheque amount';
+				$num='danger';
+				$num.='&id='.$_REQUEST['id'];
+				$url= ADMIN_URL."/packages/packageallocate.php";
+				$general->redirectUrl($url, $num);
+				exit;
+			}
+			
+			if (trim($_REQUEST['chequedate'])=="") {
+				$_SESSION['msg']='Please enter cheque date';
+				$num='danger';
+				$num.='&id='.$_REQUEST['id'];
+				$url= ADMIN_URL."/packages/packageallocate.php";
+				$general->redirectUrl($url, $num);
+				exit;
+			}
+		}
+		
+		if (trim($_REQUEST['allocationdate'])=="") {
+			$_SESSION['msg']='Please enter allocation date';
+			$num='danger';
+			$num.='&id='.$_REQUEST['id'];
+			$url= ADMIN_URL."/packages/packageallocate.php";
+			$general->redirectUrl($url, $num);
+			exit;
+		}
+	
+		if ($_REQUEST['paymenttype'] == 0) {
+			$fieldvalues = array('customerid' => $_REQUEST['customer'],'packageid' => $_REQUEST['id'], 'payment_type' => $_REQUEST['paymenttype'], 'amount'=> $_REQUEST['amount'], "allocationdate" => $_REQUEST['allocationdate'],"remark" => $_REQUEST['remark'], "date_added" => date('Y-m-d H:i:s'));
+		} else{
+			$fieldvalues = array('customerid' => $_REQUEST['customer'],'packageid' => $_REQUEST['id'], 'payment_type' => $_REQUEST['paymenttype'], 'amount'=> $_REQUEST['amount'], "bank" => $_REQUEST['bank'], "instrumentname" => $_REQUEST['instrumentname'], "instrumentno" => $_REQUEST['instrumentno'],"chequeamount" => $_REQUEST['chequeamount'],"chequedate" => $_REQUEST['chequedate'],"allocationdate" => $_REQUEST['allocationdate'],"remark" => $_REQUEST['remark'], "date_added" => date('Y-m-d H:i:s'));
+		}
+				
+		$updated = $Package->packageAllocation($fieldvalues);
+	
+		if ($updated) {
+			$general->addLogAction($_SESSION['adm_user_id'],'Added', $updated, 'Package Allocation', $_SESSION['adm_status']);
+			$error  = 'success';
+			$_SESSION['msg'] = 'Package allocated successfully.';
+		} else {
+			$error  ='danger';
+			$_SESSION['msg']='Error allocating package.';
+		}
+	
+		$url= ADMIN_URL."/packages/index.php";
+		$general->redirectUrl($url,$error);
+		exit;
+	}
+	
+	/*********************************************************************************************************/
 ?>

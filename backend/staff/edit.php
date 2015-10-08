@@ -124,35 +124,6 @@
                                          <textarea class="form-control" placeholder="Address" name="address" id="address"><?php echo stripslashes($rows->address); ?></textarea>    
                                     </div>
                                 </div>
-                                
-                                <div class="form-group">
-                                    <label class="control-label col-md-3">Service<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
-                                    	<select name="service" id="service" class="form-control">
-                                    		<option value="">Select Service</option>
-	                                    	<?php
-	                                    	$results=Staff::getServices();
-	                                    	
-	                                    	if (count($results)>0) {
-	                                    		for ($index = 0; $index < count($results); $index++)
-	                                    		{
-	                                    			$myrows = $results[$index];
-	                                    			if ($myrows['id'] == $rows->serviceid){
-	                                    			?>
-                                    					<option value="<?php echo $myrows['id'];?>" selected="selected"><?php echo $myrows['servicename'];?></option>
-                                    				<?php 
-	                                    			}
-	                                    			else {
-	                                    			?>
-	                                    				<option value="<?php echo $myrows['id'];?>"><?php echo $myrows['servicename'];?></option>
-	                                    			<?php 
-	                                    			}
-	                                    		}
-	                                    	}                                    	
-	                                    	?>                                    		
-	                                    </select>    
-                                    </div>
-                                </div>                
                                   
                                 <div class="form-group">
                                     <label class="control-label col-md-3">Assign Services<span class="required" aria-required="true">*</span></label>                                    
@@ -382,9 +353,6 @@ var FormValidation = function () {
                         email:true
                     },
                     address:{
-                        required:true
-                    },
-                    service:{
                         required:true
                     },
                     "assignservice[]":{

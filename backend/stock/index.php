@@ -81,7 +81,7 @@
 								<div class="row">
 									<div class="col-md-6">
 										<div class="btn-group">
-											<a href="<?php echo ADMIN_URL;?>/packages/add.php" class="btn green">
+											<a href="<?php echo ADMIN_URL;?>/stock/add.php" class="btn green">
 											Add New <i class="fa fa-plus"></i>
 											</a>
 										</div>
@@ -100,24 +100,23 @@
                                     
 								</div>
 							</div>
-                    <form name="form1" method="post" action="<?php echo ADMIN_URL;?>/packages/DB.php?FLAG=DELSELECT">
+                    <form name="form1" method="post" action="<?php echo ADMIN_URL;?>/stock/DB.php?FLAG=DELSELECT">
                     <table class="table table-striped table-bordered table-hover" id="sample_1">
                     <thead>
                     <tr>
                         <th class="table-checkbox"><input type="checkbox" class="group-checkable" data-set="#sample_1 .checkboxes"/></th>
-                        <th>Name</th>
-                        <th>Cost</th>
-                        <th>Credits</th>
-                        <!-- <th>Services</th> -->
-                        <th>Service Discount</th>
-                        <th>Product Discount</th>
+                        <th>Product Name</th>
+                        <th>Category</th>
+                        <th>Model</th>
+                        <th>Unit</th>
+                        <th>Volume</th>
                         <th>Date Created</th>
                         <th>Action</th>
                     </tr>
                     </thead>
                     <tbody>
                     <?php	
-					$results=Package::getPackages();
+					$results=Stock::getStockdetail();
 
 					if (count($results)>0) {
 						  for ($index = 0; $index < count($results); $index++) 
@@ -126,16 +125,14 @@
                    		?>
                         <tr class="<?php echo (($index+1)%2==0)? 'even':'odd' ?> gradeX">
                             <td> <input  name="delete[]" type="checkbox" id="delete[]" value="<?php echo $rows['id'] ;?>" class="checkboxes" /> </td>
-                            <td><?php echo $general->subStr($rows['name'], 60); ?></td>
-                            <td><?php echo $general->subStr($rows['cost'], 60); ?></td>
-                            <td><?php echo $rows['creditprovided'];?></td>
-                            <!-- <td><?php //echo $rows['serviceapplicable'];?></td> -->
-                            <td><?php echo $rows['servicediscount'];?></td>
-                            <td><?php echo $rows['productdiscount'];?></td>
+                            <td><?php echo $general->subStr($rows['productname'], 60); ?></td>
+                            <td><?php echo $general->subStr($rows['categorynm'], 60); ?></td>
+                            <td><?php echo $rows['model'];?></td>
+                            <td><?php echo $rows['unit'];?></td>
+                            <td><?php echo $rows['volume'];?></td>
                             <td><?php echo $rows['date_added'];?></td> 
                             <td>
-                            	<a href="<?php echo ADMIN_URL;?>/packages/packageallocate.php?id=<?php echo $rows['id'];?>" class="btn default btn-xs purple"><i class="fa fa-share-square-o"></i> Allocate </a>&nbsp;
-                                <a href="<?php echo ADMIN_URL;?>/packages/edit.php?id=<?php echo $rows['id'];?>" class="btn default btn-xs purple"><i class="fa fa-edit"></i> Edit </a>&nbsp;<a href="<?php echo ADMIN_URL;?>/packages/DB.php?id=<?php echo $rows['id']; ?>&FLAG=DELETE" class="dellink btn default btn-xs purple"><i class="fa fa-trash-o"></i> Delete </a>
+                                <a href="<?php echo ADMIN_URL;?>/stock/edit.php?id=<?php echo $rows['id'];?>" class="btn default btn-xs purple"><i class="fa fa-edit"></i> Edit </a>&nbsp;<a href="<?php echo ADMIN_URL;?>/stock/DB.php?id=<?php echo $rows['id']; ?>&FLAG=DELETE" class="dellink btn default btn-xs purple"><i class="fa fa-trash-o"></i> Delete </a>
                             </td>
                         </tr>
                     <?php 

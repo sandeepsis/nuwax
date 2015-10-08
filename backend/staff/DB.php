@@ -65,14 +65,6 @@
 			exit;
 		}
 		
-		if (trim($_REQUEST['service'])=="")	{
-			$_SESSION['msg']='Please select services';
-			$num='danger';
-			$url= ADMIN_URL."/staff/add.php";
-			$general->redirectUrl($url, $num);
-			exit;
-		}
-		
 		if ($_REQUEST['assignservice'][0] == "")	{
 			$_SESSION['msg']='Please select assign service';
 			$num='danger';
@@ -172,15 +164,6 @@
 		
 		if (trim($_REQUEST['address'])=="") {
 			$_SESSION['msg']='Please enter address';
-			$num='danger';
-			$num.='&id='.$_REQUEST['id'];
-			$url= ADMIN_URL."/staff/edit.php";
-			$general->redirectUrl($url, $num);
-			exit;
-		}
-		
-		if (trim($_REQUEST['service'])=="") {
-			$_SESSION['msg']='Please select services';
 			$num='danger';
 			$num.='&id='.$_REQUEST['id'];
 			$url= ADMIN_URL."/staff/edit.php";

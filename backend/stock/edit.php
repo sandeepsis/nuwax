@@ -5,8 +5,8 @@
 	$general = new General($dbBean);
 	$menu_id	= (empty($_REQUEST['menu_id'])?$_SESSION['menu_id']:$_REQUEST['menu_id']);
 	$heading	= $general->getPageHeading($menu_id);
-	$Customer 	= new Customer($dbBean);
-	$rows 		= $Customer->getCustomerById($_REQUEST['id']);
+	$Stock = new Stock($dbBean);
+	$rows = $Stock->getStockById($_REQUEST['id']);
 	
 ?>
 <!DOCTYPE html>
@@ -21,7 +21,6 @@
 <!-- BEGIN PAGE LEVEL STYLES -->
 
 <link rel="stylesheet" type="text/css" href="<?php echo ADMIN_URL;?>/assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
-<link rel="stylesheet" type="text/css" href="<?php echo ADMIN_URL;?>/assets/global/css/dhtmlxcalendar.css">
 
 <!-- END PAGE LEVEL STYLES -->
 <?php include('../common_second.php');?>
@@ -80,83 +79,116 @@
                        ?>
                         <!-- BEGIN FORM-->
                         
-                        <form id="frmcustomer" name="frmcustomer" method="post" action="<?php echo ADMIN_URL;?>/customers/DB.php" class="form-horizontal">
+                        <form id="frmstock" name="frmstock" method="post" action="<?php echo ADMIN_URL;?>/stock/DB.php" class="form-horizontal">
                             <div class="form-body">           
-                                <div class="form-group">
-                                    <label class="control-label col-md-3">Name<span class="required" aria-required="true">*</span></label>
+                                	<div class="form-group">
+                                    <label class="control-label col-md-3">Status<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Name" name="name" id="name" value="<?php echo stripslashes($rows->name); ?>"/>    
+                                    	<select id="status" name="status" class="form-control">
+                                    		<option value="0" <?php if($rows->status == 0) echo "selected='selected'"?>>For sale</option>
+                                    		<option value="1" <?php if($rows->status == 1) echo "selected='selected'"?>>Stop selling</option>   
+										</select>
+                                        
+                                    </div>
+                                </div>                                                                                                
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Category<span class="required" aria-required="true">*</span></label>
+                                    <div class="col-md-4">
+                                         <select name="category" id="category" class="form-control">
+                                    		<option value="">Select Category</option>
+	                                    	<?php
+	                                    	$results=Stock::getServicecategory();
+	                                    	
+	                                    	if (count($results)>0) {
+	                                    		for ($index = 0; $index < count($results); $index++)
+	                                    		{
+	                                    			$mrows = $results[$index];
+	                                    			if ($mrows['id'] == $rows->categoryid) {
+	                                    			?>
+                                    					<option value="<?php echo $mrows['id'];?>" selected="selected"><?php echo $mrows['categoryname'];?></option>
+                                    				<?php
+	                                    			} else {
+	                                    			?>
+	                                    				<option value="<?php echo $mrows['id'];?>"><?php echo $mrows['categoryname'];?></option>
+	                                    			<?php 
+	                                    			}
+	                                    		}
+	                                    	}                                    	
+	                                    	?>                                    		
+	                                    </select>      
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Email Address<span class="required" aria-required="true">*</span></label>
+                                    <label class="control-label col-md-3">Product Name<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Email Id" name="emailid" id="emailid" value="<?php echo stripslashes($rows->email); ?>" />    
+                                         <input type="text" class="form-control" placeholder="Product Name" name="productname" id="productname" value="<?php echo stripslashes($rows->productname); ?>" />    
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Contact No</label>
+                                    <label class="control-label col-md-3">SKU Code<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Contact No" name="contactno" id="contactno" value="<?php echo stripslashes($rows->contactno); ?>" />    
+                                         <input type="text" class="form-control" placeholder="SKU Code" name="skucode" id="skucode" value="<?php echo stripslashes($rows->skucode); ?>" />    
                                     </div>
                                 </div>
-
+                                                                
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Address</label>
+                                    <label class="control-label col-md-3">Barcode<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
-                                         <textarea class="form-control" placeholder="Address" name="address" id="address"><?php echo stripslashes($rows->address); ?></textarea>
+                                         <input type="text" class="form-control" placeholder="Barcode" name="barcode" id="barcode" value="<?php echo stripslashes($rows->barcode); ?>" />    
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Student Card No</label>
+                                    <label class="control-label col-md-3">Model<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Student Card No" name="studentcardno" id="studentcardno" value="<?php echo stripslashes($rows->studentcardno); ?>" />    
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group" id="divcpmy">
-                                    <label class="control-label col-md-3">Student Card Validity</label>
-                                    <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Student Card Validity" name="studentcardvalidity" id="studentcardvalidity" value="<?php echo stripslashes($rows->studentcardvalidity); ?>" />    
-                                    </div>
-                                </div>
-                                                                                               
-                                <div class="form-group">
-                                    <label class="control-label col-md-3">Credit</label>
-                                    <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Credit" name="credit" id="credit" value="<?php echo stripslashes($rows->credit); ?>" />    
+                                         <input type="text" class="form-control" placeholder="Model" name="model" id="model" value="<?php echo stripslashes($rows->model); ?>"/>    
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Remark</label>
+                                    <label class="control-label col-md-3">Unit<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
-                                         <textarea class="form-control" placeholder="Remark" name="remark" id="remark"><?php echo stripslashes($rows->remark); ?></textarea>    
+                                         <input type="text" class="form-control" placeholder="Unit" name="unit" id="unit" value="<?php echo stripslashes($rows->unit); ?>" />    
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="col-md-3 control-label">Status<span class="required" aria-required="true">*</span></label>
+                                    <label class="control-label col-md-3">Volume<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
-                                    	<select name="status" id="status" class="form-control form-filter input-sm">    
-                                         	<option value="0" <?php if ($rows->status == 0) {echo "selected=selected";}?>>Active</option>
-                                         	<option value="1" <?php if ($rows->status == 1) {echo "selected=selected";}?>>Inactive</option>                                         	
-                                         </select>
+                                         <input type="text" class="form-control" placeholder="Volume" name="volume" id="volume" value="<?php echo stripslashes($rows->volume); ?>" />    
                                     </div>
                                 </div>
-
-
+                                
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Cost Price<span class="required" aria-required="true">*</span></label>
+                                    <div class="col-md-4">
+                                         <input type="text" class="form-control" placeholder="Cost Price" name="costprice" id="costprice" value="<?php echo stripslashes($rows->costprice); ?>"/>    
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Selling Price<span class="required" aria-required="true">*</span></label>
+                                    <div class="col-md-4">
+                                         <input type="text" class="form-control" placeholder="Selling Price" name="sellingprice" id="sellingprice" value="<?php echo stripslashes($rows->sellingprice); ?>" />    
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Description</label>
+                                    <div class="col-md-4">
+                                         <textarea class="form-control" placeholder="Description" name="description" id="description"><?php echo stripslashes($rows->description); ?></textarea>    
+                                    </div>
+                                </div>
+                                
                             </div>
                             <div class="form-actions">
                                 <div class="row">
                                     <div class="col-md-offset-3 col-md-4">
-                                    	<input type="hidden" name="FLAG" value="EDIT_CUSTOMER" />
-                                    	<input type="hidden" name="statusflag" value="<?php echo $rows->status;?>" />
+                                    	<input type="hidden" name="FLAG" value="EDIT_STOCK" />
                                         <input name="id" type="hidden" value="<?php echo $_REQUEST['id'];?>" />                                        
                                         <button type="submit" class="btn green">Submit</button>
-                                        <button type="button" class="btn default" name="cancel" onClick="javascript: window.location.href='<?php echo ADMIN_URL;?>/customers/index.php'">Cancel</button>
+                                        <button type="button" class="btn default" name="cancel" onClick="javascript: window.location.href='<?php echo ADMIN_URL;?>/stock/index.php'">Cancel</button>
                                     </div>
                                 </div>
                             </div>
@@ -175,19 +207,14 @@
 <?php include_once("../scripts.php"); ?>
 <!-- BEGIN PAGE LEVEL PLUGINS -->
 <script type="text/javascript" src="<?php echo ADMIN_URL;?>/assets/global/plugins/jquery-validation/js/jquery.validate.min.js"></script>
-<script type="text/javascript" src="<?php echo  ADMIN_URL;?>/assets/global/scripts/dhtmlxcalendar.js"></script>
 
 <!-- END PAGE LEVEL PLUGINS -->
-<script>
-var myCalendar;
-function doOnLoad() {
-	myCalendar = new dhtmlXCalendarObject(["studentcardvalidity"]);
-	myCalendar.hideTime();
-	myCalendar.setDateFormat("%Y-%m-%d");
-}
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
 
-jQuery(document).ready(function() {  
-	doOnLoad();
+
+<!-- END PAGE LEVEL SCRIPTS -->
+<script>
+jQuery(document).ready(function() {    
    Metronic.init(); // init metronic core components
    Layout.init(); // init current layout
    FormValidation.init();
@@ -201,7 +228,7 @@ var FormValidation = function () {
         // for more info visit the official plugin documentation: 
         // http://docs.jquery.com/Plugins/Validation
 
-            var form3 = $('#frmcustomer');
+            var form3 = $('#frmstock');
             var error3 = $('.alert-danger', form3);
             var success3 = $('.alert-success', form3);
 
@@ -211,20 +238,37 @@ var FormValidation = function () {
                 focusInvalid: false, // do not focus the last invalid input
                 ignore: "", // validate all fields including form hidden input
                 rules: {
-                	name: {
+                	category: {
                         required: true
-                    },                    
-                    emailid: {
-                        required: true,
-                        email: true
-                    },
-    		        contactno: {                        
+                    }, 
+                    productname: {
+                        required: true
+                    }, 
+                    skucode: {
+                        required: true
+                    }, 
+                    barcode: {
+                        required: true
+                    }, 
+                    model: {
+                        required: true
+                    },     
+    		        unit: {                        
                         required: true,
                         number: true
                     },
-    		        address: {
-        		        required: true
-        		        }
+    		        volume: {
+        		        required: true,
+						number:true        		        
+        		    }, 
+                    costprice: {                        
+                        required: true,
+                        number: true
+                    },
+                    sellingprice: {                        
+                        required: true,
+                        number: true
+                    }
                 },
 
                 messages: { // custom messages for radio buttons and checkboxes

@@ -18,6 +18,7 @@
 <!-- BEGIN PAGE LEVEL STYLES -->
 
 <link rel="stylesheet" type="text/css" href="<?php echo ADMIN_URL;?>/assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+<link rel="stylesheet" type="text/css" href="<?php echo ADMIN_URL;?>/assets/global/css/sandeep.css"/>
 
 <!-- END PAGE LEVEL STYLES -->
 <?php include('../common_second.php');?>
@@ -77,7 +78,7 @@
                         <!-- BEGIN FORM-->
                         <form id="frmpackage" name="frmpackage" method="post" action="<?php echo ADMIN_URL;?>/packages/DB.php" class="form-horizontal">
                             <div class="form-body">
-                            	                                                                                                
+                            	 <div id="divmsg" class="diverror"></div>                                                                                               
                                 <div class="form-group">
                                     <label class="control-label col-md-3">Package Name<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
@@ -92,7 +93,7 @@
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Credit Provided<span class="required" aria-required="true">*</span></label>
+                                    <label class="control-label col-md-3">Credit Provided</label>
                                     <div class="col-md-4">
                                          <input type="text" class="form-control" placeholder="Credit Provided" name="creditprovided" id="creditprovided" value="" />    
                                     </div>
@@ -121,14 +122,14 @@
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Service Discount (%)<span class="required" aria-required="true">*</span></label>
+                                    <label class="control-label col-md-3">Service Discount (%)</label>
                                     <div class="col-md-4">
                                          <input type="text" class="form-control" placeholder="Service Discount (%)" name="servicediscount" id="servicediscount" value="" />    
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Product Discount (%)<span class="required" aria-required="true">*</span></label>
+                                    <label class="control-label col-md-3">Product Discount (%)</label>
                                     <div class="col-md-4">
                                          <input type="text" class="form-control" placeholder="Product Discount (%)" name="productdiscount" id="productdiscount"/>    
                                     </div>
@@ -174,10 +175,6 @@
 <script type="text/javascript" src="<?php echo ADMIN_URL;?>/assets/global/plugins/jquery-validation/js/jquery.validate.min.js"></script>
 
 <!-- END PAGE LEVEL PLUGINS -->
-<!-- BEGIN PAGE LEVEL SCRIPTS -->
-
-
-<!-- END PAGE LEVEL SCRIPTS -->
 <script>
 jQuery(document).ready(function() {    
    Metronic.init(); // init metronic core components
@@ -210,20 +207,8 @@ var FormValidation = function () {
                         required: true,
                         number: true
                     },
-    		        creditprovided: {
-        		        required: true,
-						number:true        		        
-        		    },
         		    serviceapplicable: {
                         required: true
-                    }, 
-                    servicediscount: {                        
-                        required: true,
-                        number: true
-                    },
-                    productdiscount: {                        
-                        required: true,
-                        number: true
                     },
                     taxname: {
                         required: true
@@ -234,7 +219,7 @@ var FormValidation = function () {
                     }
                },
 
-                messages: { 
+                messages: {
                 },
 
                 errorPlacement: function (error, element) { // render error placement for each input type
@@ -277,6 +262,13 @@ var FormValidation = function () {
                 },
 
                 submitHandler: function (form) {
+                    if ($("#creditprovided").val() == '' && $("#servicediscount").val() == "" && $("#productdiscount").val() == "") {
+                        $("#divmsg").html("Please Enter atleast one out of credit provided, service discount or product discount");
+                        return false;
+                    } else {
+                    	$("#divmsg").html("");
+                    }
+                    
                     success3.show();
                     error3.hide();
                     form.submit(); // submit the form

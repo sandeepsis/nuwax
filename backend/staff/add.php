@@ -114,28 +114,6 @@
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Service<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
-                                    	<select name="service" id="service" class="form-control">
-                                    		<option value="">Select Service</option>
-	                                    	<?php
-	                                    	$results=Staff::getServices();
-	                                    	
-	                                    	if (count($results)>0) {
-	                                    		for ($index = 0; $index < count($results); $index++)
-	                                    		{
-	                                    			$rows = $results[$index];
-	                                    			?>
-	                                    			<option value="<?php echo $rows['id'];?>"><?php echo $rows['servicename'];?></option>
-	                                    			<?php 
-	                                    		}
-	                                    	}                                    	
-	                                    	?>                                    		
-	                                    </select>    
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group">
                                     <label class="control-label col-md-3">Assign Services<span class="required" aria-required="true">*</span></label>                                    
 	                                    <div class="col-md-4" id="divadd">
 	                                    	<div id='divrow1' class="divpadding">
@@ -276,9 +254,6 @@ var FormValidation = function () {
                         email:true
                     },
                     address:{
-                        required:true
-                    },
-                    service:{
                         required:true
                     },
                     "assignservice[]":{

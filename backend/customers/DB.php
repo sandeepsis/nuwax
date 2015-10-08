@@ -56,7 +56,7 @@
 			exit;
 		}
 		
-		$fieldvalues = array('name' => $_REQUEST['name'], 'email' => $_REQUEST['emailid'], 'contactno'=> $_REQUEST['contactno'], "address" => $_REQUEST['address'], "studentcardno" => $_REQUEST['studentcardno'],"status" => $_REQUEST['status'], "remark" => $_REQUEST['remark'], "credit" => $_REQUEST['credit'],"is_deleted" =>0, "registerdate" => date('Y-m-d H:i:s'));
+		$fieldvalues = array('name' => $_REQUEST['name'], 'email' => $_REQUEST['emailid'], 'contactno'=> $_REQUEST['contactno'], "address" => $_REQUEST['address'], "studentcardno" => $_REQUEST['studentcardno'],"studentcardvalidity" => $_REQUEST['studentcardvalidity'],"status" => $_REQUEST['status'], "remark" => $_REQUEST['remark'], "credit" => $_REQUEST['credit'],"is_deleted" =>0, "registerdate" => date('Y-m-d H:i:s'));
 		
 		$updated = $Customer->addCustomer($fieldvalues);
 		
@@ -80,10 +80,10 @@
 		$mail->Subject ="Set password link";//this is used to intialte subject of the mail
 		
 		$msg="Hello ".$_REQUEST['name']."<br/><br/>";
-		$msg.="Set password link : <a href='".SITE_URL."setpwd.php?token=".$token."'>set password</a><br/><br/>";
+		$msg.="Set password link : <a href='".SITE_URL."setpwd.php?token=".$token."'>Set Password</a><br/><br/>";
 		$mail->MsgHTML($msg);
 		
-		$mail->AddAddress('nirmalaparmar29@gmail.com');//$_REQUEST['emailaddress']
+		$mail->AddAddress($_REQUEST['emailaddress']);
 		if(!$mail->Send()){$mail->ErrorInfo;}
 		$mail->ClearAddresses();
 		
@@ -162,7 +162,7 @@
 		
 		$cond		= array("id" => $_REQUEST['id']);
 
-		$fieldvalues = array('name' => $_REQUEST['name'], 'email' => $_REQUEST['emailid'], 'contactno'=> $_REQUEST['contactno'], "address" => $_REQUEST['address'], "studentcardno" => $_REQUEST['studentcardno'],"status" => $_REQUEST['status'], "remark" => $_REQUEST['remark'], "credit" => $_REQUEST['credit']);
+		$fieldvalues = array('name' => $_REQUEST['name'], 'email' => $_REQUEST['emailid'], 'contactno'=> $_REQUEST['contactno'], "address" => $_REQUEST['address'], "studentcardno" => $_REQUEST['studentcardno'],"studentcardvalidity" => $_REQUEST['studentcardvalidity'],"status" => $_REQUEST['status'], "remark" => $_REQUEST['remark'], "credit" => $_REQUEST['credit']);
 		
 		$updated =$Customer->updateCustomer($fieldvalues, $cond);
 
@@ -260,12 +260,13 @@
 		$updated = $dbBean->UpdateRows("customer", $fieldvalues, $cond);
 	
 		if ($updated){
-			$error  ='Password successfully changed.';
+			$error  ='success';
 		}else{
-			$error  ='Error changing password.';
+			$error  ='error';
 		}
 	
-		echo $error;
+		$url= SITE_URL."thankyou.php";
+		$general->redirectUrl($url,$error);
 		exit;
 	}
 	/*********************************************************************************************************/
