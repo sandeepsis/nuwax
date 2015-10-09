@@ -40,6 +40,9 @@
 	define('STAFF_LARGE_IMG', STAFF.'large/');
 	define('STAFF_THUMB_IMG', STAFF.'thumb/');
 	
+	/* Staff members images path */
+	define('VOUCHER_NO_CONST', 1000);
+	
 	/* mail constants */
 	define("SMPT_EMAIL", "youremail@gmail.com");
 	define("SMPT_PASS", "yourpassword");

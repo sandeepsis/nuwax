@@ -12,13 +12,11 @@
 	define('DB_USER','root');
 	define('DB_PASS','');
 
-/*	
-	// Local settings
+/*	// Local settings
     define('_DB_PREFIX','');
     define('DB_HOST','localhost');
     define('DB_NAME','nuwax');  
     define('DB_USER','root');
     define('DB_PASS','');
-	
-  */  
+	*/  
 ?>
