@@ -87,7 +87,7 @@
 										</div>
 									</div>
                                                                         
-									<div class="col-md-6">
+									<!-- <div class="col-md-6">
 										<div class="btn-group pull-right">
 											<button class="btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Tools <i class="fa fa-angle-down"></i>
 											</button>
@@ -96,7 +96,7 @@
 												</li>
 											</ul>
 										</div>
-									</div>                                    
+									</div> -->                                    
                                     
 								</div>
 							</div>
@@ -104,7 +104,7 @@
                     <table class="table table-striped table-bordered table-hover" id="sample_1">
                     <thead>
                     <tr>
-                        <th class="table-checkbox"><input type="checkbox" class="group-checkable" data-set="#sample_1 .checkboxes"/></th>
+                        <!-- <th class="table-checkbox"><input type="checkbox" class="group-checkable" data-set="#sample_1 .checkboxes"/></th> -->
                         <th>Voucher No</th>
                         <th>Product</th>
                         <th>Quantity</th>
@@ -124,7 +124,7 @@
 							  $rows = $results[$index];
                    		?>
                         <tr class="<?php echo (($index+1)%2==0)? 'even':'odd' ?> gradeX">
-                            <td> <input  name="delete[]" type="checkbox" id="delete[]" value="<?php echo $rows['id'] ;?>" class="checkboxes" /> </td>
+                            <!-- <td> <input  name="delete[]" type="checkbox" id="delete[]" value="<?php echo $rows['id'] ;?>" class="checkboxes" /> </td> -->
                             <td><?php echo $rows['voucherno']; ?></td>
                             <td><?php echo $rows['productname'];?></td>
                             <td><?php echo $rows['productquantity'];?></td>
@@ -233,7 +233,7 @@ var TableManaged = function () {
             "bStateSave": true, // save datatable state(pagination, sort, etc) in cookie.
 
             "columns": [{
-                "orderable": false
+                "orderable": true
             }, {
                 "orderable": true
             }, {
@@ -264,13 +264,13 @@ var TableManaged = function () {
             },
             "columnDefs": [{  // set default column settings
                 'orderable': false,
-                'targets': [0,7]
+                'targets': [0,6]
             }, {
                 "searchable": false,
                 "targets": [0,4]
             }],
             "order": [
-                [7, "desc"]
+                [6, "desc"]
             ] // set first column as a default sort by asc
         });
 

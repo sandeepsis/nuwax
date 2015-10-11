@@ -1,41 +1,23 @@
 <?php
-class Package {
+class Booking {
     var $dbBean;
 	var $general;
     
-    function Package($dbBean) {
+    function Booking($dbBean) {
         $this->dbBean=$dbBean;
 		$this->general=new General($this->dbBean);
 	}
 	
-	public function addPackage($fieldvalues)
+	public function addBooking($fieldvalues)
 	{
-		$saved = $this->dbBean->InsertRow("package", $fieldvalues);
+		$saved = $this->dbBean->InsertRow("bookings", $fieldvalues);
 		return $saved;
 	}
 	
-	public function addPackageservices($fieldvalues)
-	{
-		$saved = $this->dbBean->InsertRow("packageservices", $fieldvalues);
-		return $saved;
-	}
-		
 	public function addcreditmanagement($fieldvalues)
 	{
 		$saved = $this->dbBean->InsertRow("creditmanagement", $fieldvalues);
 		return $saved;
-	}
-	
-	public function updatePackage($fieldvalues, $cond)
-	{
-		$edited = $this->dbBean->UpdateRows("package", $fieldvalues, $cond);
-		return $edited;
-	}
-	
-	public function updatePackageservices($fieldvalues, $cond)
-	{
-		$edited = $this->dbBean->UpdateRows("packageservices", $fieldvalues, $cond);
-		return $edited;
 	}
 	
 	public function updateCustomer($fieldvalues, $cond)
@@ -43,13 +25,19 @@ class Package {
 		$edited = $this->dbBean->UpdateRows("customer", $fieldvalues, $cond);
 		return $edited;
 	}
+	
+	public function updateBooking($fieldvalues, $cond)
+	{
+		$edited = $this->dbBean->UpdateRows("bookings", $fieldvalues, $cond);
+		return $edited;
+	}
 
-	public static function getPackages()
+	public static function getBookings()
 	{
 		$resultarray=array();
 		global $dbBean;
 		
-		$query="SELECT * FROM package where is_deleted=0 order by id desc";
+		$query="SELECT *,date_format(servicedate,'%d-%m-%Y') servicedate,(select name from customer where id=customerid) customername,(select servicename from services where id=serviceid) servicename FROM bookings where is_deleted=0 order by id desc";
 		
 		if (!$dbBean->QueryArray($query)) $dbBean->Kill();
 		if ($dbBean->RowCount()>0)
@@ -59,19 +47,19 @@ class Package {
 		return $resultarray;		
 	}
 	
-	public static function getPackageById($id=0)
+	public static function getBookingById($id=0)
 	{
 		$resultarray=array();
 		global $dbBean;
-		$query="SELECT * FROM package WHERE is_deleted=0 and id=" . intval($id);
+		$query="SELECT *,(select name from customer where id=customerid) customername,(select servicename from services where id=serviceid) servicename FROM bookings WHERE is_deleted=0 and id=" . intval($id);
 		
 		if (! $resultarray = $dbBean->QuerySingleRow($query)) $dbBean->Kill();
 		return $resultarray;		
 	}
 		
-	public function deletePackage($fieldvalues,$cond)
+	public function deleteBooking($fieldvalues,$cond)
 	{
-		$edited = $this->dbBean->UpdateRows("package", $fieldvalues, $cond);
+		$edited = $this->dbBean->UpdateRows("bookings", $fieldvalues, $cond);
 		return $edited;
 	}
 	
@@ -105,23 +93,18 @@ class Package {
 		return $resultarray;
 	}
 	
-	public function packageAllocation($fieldvalues)
-	{
-		$saved = $this->dbBean->InsertRow("packageallocation", $fieldvalues);
-		return $saved;
-	}
-	
-	public static function getcreditByPackageid($id=0)
+	public static function getStaffs()
 	{
 		$resultarray=array();
 		global $dbBean;
-		$query="SELECT * FROM creditmanagement WHERE packageid=" . intval($id);
-		$dbBean->QueryArray($query);
+	
+		$query="SELECT * FROM staff where is_deleted=0 order by id desc";
+	
+		if (!$dbBean->QueryArray($query)) $dbBean->Kill();
 		if ($dbBean->RowCount()>0)
 		{
 			$resultarray = $dbBean->RecordsArray(MYSQLI_ASSOC);
 		}
-	
 		return $resultarray;
 	}
 	
@@ -135,22 +118,28 @@ class Package {
 		return $resultarray;
 	}
 	
-	public static function getPackageservicesByPackageid($id=0)
+	public static function getServiceById($id=0)
 	{
-		//$resultarray=array();
+		$resultarray=array();
 		global $dbBean;
-		$query="SELECT serviceid FROM packageservices WHERE packageid=" . intval($id);
+		$query="SELECT * FROM services WHERE is_deleted=0 and id=" . intval($id);
 	
 		$resultarray = $dbBean->QuerySingleRow($query);
 		return $resultarray;
 	}
 	
-	public function deletePackageservices($id)
+	public static function getcreditByBookingid($id=0)
 	{
-		$cond= array("packageid" => intval($id));
-		$edited = $this->dbBean->DeleteRows("packageservices", $cond);
-		return $edited;
+		$resultarray=array();
+		global $dbBean;
+		$query="SELECT * FROM creditmanagement WHERE bookingid=" . intval($id);
+		$dbBean->QueryArray($query);
+		if ($dbBean->RowCount()>0)
+		{
+			$resultarray = $dbBean->RecordsArray(MYSQLI_ASSOC);
+		}
+		
+		return $resultarray;
 	}
-	
 }
 ?>

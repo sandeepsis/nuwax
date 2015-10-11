@@ -78,7 +78,13 @@
                        ?>
                         <!-- BEGIN FORM-->
                         <form id="frmpackageallocate" name="frmpackageallocate" method="post" action="<?php echo ADMIN_URL;?>/packages/DB.php" class="form-horizontal">
-                            <div class="form-body">                            	 
+                            <div class="form-body">   
+                            	<div class="form-group">
+                                    <label class="control-label col-md-3">Package</label>
+                                    <div class="col-md-4">
+                                         <input type="text" class="form-control" placeholder="Package" readonly name="package" id="package" value="<?php echo $myrows->name;?>"/>    
+                                    </div>
+                                </div>                         	 
                                 <div class="form-group">
                                     <label class="control-label col-md-3">Customer<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
@@ -167,6 +173,7 @@
                                     <div class="col-md-offset-3 col-md-4">
                                     	<input type="hidden" name="FLAG" value="ALLOCATE_PACKAGE" />
                                     	<input name="id" type="hidden" value="<?php echo $_REQUEST['id'];?>" />
+                                    	<input type="hidden" name="creditprovided" id="creditprovided" value="<?php echo $myrows->creditprovided;?>" />
                                         <button type="submit" class="btn green">Submit</button>
                                         <button type="button" class="btn default" name="cancel" onClick="javascript: window.location.href='<?php echo ADMIN_URL;?>/packages/index.php'">Cancel</button>
                                     </div>

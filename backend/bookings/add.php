@@ -18,7 +18,7 @@
 <!-- BEGIN PAGE LEVEL STYLES -->
 
 <link rel="stylesheet" type="text/css" href="<?php echo ADMIN_URL;?>/assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
-<link rel="stylesheet" type="text/css" href="<?php echo ADMIN_URL;?>/assets/global/css/sandeep.css"/>
+<link rel="stylesheet" type="text/css" href="<?php echo ADMIN_URL;?>/assets/global/css/dhtmlxcalendar.css">
 
 <!-- END PAGE LEVEL STYLES -->
 <?php include('../common_second.php');?>
@@ -76,35 +76,38 @@
                             }
                        ?>
                         <!-- BEGIN FORM-->
-                        <form id="frmpackage" name="frmpackage" method="post" action="<?php echo ADMIN_URL;?>/packages/DB.php" class="form-horizontal">
+                        <form id="frmbooking" name="frmbooking" method="post" action="<?php echo ADMIN_URL;?>/bookings/DB.php" class="form-horizontal">
                             <div class="form-body">
-                            	 <div id="divmsg" class="diverror"></div>                                                                                               
+                            	                                                                                               
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Package Name<span class="required" aria-required="true">*</span></label>
+                                    <label class="control-label col-md-3">Customer<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Package Name" name="packagename" id="packagename" value=""/>    
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-md-3">Cost<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Cost" name="cost" id="cost" value="" />    
+                                         <select name="customer" id="customer" class="form-control">
+                                    		<option value="">Select Customer</option>
+	                                    	<?php
+	                                    	$results=Booking::getCustomers();
+	                                    	
+	                                    	if (count($results)>0) {
+	                                    		for ($index = 0; $index < count($results); $index++)
+	                                    		{
+	                                    			$rows = $results[$index];
+	                                    			?>
+	                                    			<option value="<?php echo $rows['id'];?>"><?php echo $rows['name'];?></option>
+	                                    			<?php 
+	                                    		}
+	                                    	}                                    	
+	                                    	?>                                    		
+	                                    </select>      
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Credit Provided</label>
+                                    <label class="control-label col-md-3">Service<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Credit Provided" name="creditprovided" id="creditprovided" value="" />    
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label class="control-label col-md-3">Service Applicable<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
-                                    	<select id="serviceapplicable" name="serviceapplicable[]" multiple="multiple" class="form-control">                                    	
-                                    		<?php
-	                                    	$results=Package::getServices();
+                                         <select name="service" id="service" class="form-control" onchange="javascript:fun_getactualprice(this.value);">
+                                    		<option value="">Select Service</option>
+	                                    	<?php
+	                                    	$results=Booking::getServices();
 	                                    	
 	                                    	if (count($results)>0) {
 	                                    		for ($index = 0; $index < count($results); $index++)
@@ -115,46 +118,88 @@
 	                                    			<?php 
 	                                    		}
 	                                    	}                                    	
-	                                    	?>        
-										</select>
-                                        
+	                                    	?>                                    		
+	                                    </select>      
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Service Discount (%)</label>
+                                    <label class="control-label col-md-3">Actual Price<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Service Discount (%)" name="servicediscount" id="servicediscount" value="" />    
+                                         <input type="text" class="form-control" readonly placeholder="Actual Price" name="actualprice" id="actualprice"/>
+                                         <div id="divprice"></div>    
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Product Discount (%)</label>
+                                    <label class="control-label col-md-3">Offer Price<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Product Discount (%)" name="productdiscount" id="productdiscount"/>    
+                                         <input type="text" class="form-control" placeholder="Offer Price" name="offerprice" id="offerprice" value="" />    
+                                    </div>
+                                </div>
+                                                                
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Service Date<span class="required" aria-required="true">*</span></label>
+                                    <div class="col-md-4">
+                                         <input type="text" class="form-control" placeholder="Service Date" name="servicedate" id="servicedate" value="" />    
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Tax Name<span class="required" aria-required="true">*</span></label>
+                                    <label class="control-label col-md-3">Service Time<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Tax Name" name="taxname" id="taxname" value="" />    
+                                         <input type="text" class="form-control" placeholder="Service Time" name="servicetime" id="servicetime"/>    
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Tax (%)<span class="required" aria-required="true">*</span></label>
+                                    <label class="control-label col-md-3">Total Price<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Tax (%)" name="taxper" id="taxper" value="" />    
+                                         <input type="text" class="form-control" placeholder="Total Price" name="totalprice" id="totalprice" value="" />    
                                     </div>
                                 </div>
+                                
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Status<span class="required" aria-required="true">*</span></label>
+                                    <div class="col-md-4">
+                                         <select name="status" id="status" class="form-control" onchange="javascript: fun_showtherapist(this.value);">
+                                         	<option value="1">New</option>
+                                         	<option value="2">Confirmed</option>
+                                         	<option value="3">Cancelled</option>
+                                         	<option value="4">Absent</option>
+                                         	<option value="5">Complete</option>
+                                         </select>    
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group" id="divtherapist">
+                                    <label class="control-label col-md-3">Therapist<span class="required" aria-required="true">*</span></label>
+                                    <div class="col-md-4">
+                                         <select name="therapist" id="therapist" class="form-control">
+                                    		<option value="">Select Therapist</option>
+	                                    	<?php
+	                                    	$results=Booking::getStaffs();
+	                                    	
+	                                    	if (count($results)>0) {
+	                                    		for ($index = 0; $index < count($results); $index++)
+	                                    		{
+	                                    			$rows = $results[$index];
+	                                    			?>
+	                                    			<option value="<?php echo $rows['id'];?>"><?php echo $rows['name'];?></option>
+	                                    			<?php 
+	                                    		}
+	                                    	}                                    	
+	                                    	?>                                    		
+	                                    </select>    
+                                    </div>
+                                </div>                                
                             </div>
                             <div class="form-actions">
                                 <div class="row">
                                     <div class="col-md-offset-3 col-md-4">
-                                    	<input type="hidden" name="FLAG" value="ADD_PACKAGE" />
+                                    	<input type="hidden" name="FLAG" value="ADD_BOOKING" />
                                         <button type="submit" class="btn green">Submit</button>
-                                        <button type="button" class="btn default" name="cancel" onClick="javascript: window.location.href='<?php echo ADMIN_URL;?>/packages/index.php'">Cancel</button>
+                                        <button type="button" class="btn default" name="cancel" onClick="javascript: window.location.href='<?php echo ADMIN_URL;?>/bookings/index.php'">Cancel</button>
                                     </div>
                                 </div>
                             </div>
@@ -173,14 +218,45 @@
 <?php include_once("../scripts.php"); ?>
 <!-- BEGIN PAGE LEVEL PLUGINS -->
 <script type="text/javascript" src="<?php echo ADMIN_URL;?>/assets/global/plugins/jquery-validation/js/jquery.validate.min.js"></script>
+<script type="text/javascript" src="<?php echo  ADMIN_URL;?>/assets/global/scripts/dhtmlxcalendar.js"></script>
 
 <!-- END PAGE LEVEL PLUGINS -->
 <script>
-jQuery(document).ready(function() {    
+var myCalendar;
+function doOnLoad() {
+	myCalendar = new dhtmlXCalendarObject(["servicedate"]);
+	myCalendar.hideTime();
+	myCalendar.setDateFormat("%Y-%m-%d");	
+}
+
+jQuery(document).ready(function() {
+	doOnLoad();
+	$("#divtherapist").hide();
+	
    Metronic.init(); // init metronic core components
    Layout.init(); // init current layout
    FormValidation.init();
 });
+
+function fun_showtherapist(a)
+{
+	if (a == 5) {
+		$("#divtherapist").show();
+	} else {
+		$("#divtherapist").hide();
+	}
+}
+
+function fun_getactualprice(a)
+{
+	$("#divprice").load("<?php echo ADMIN_URL;?>/bookings/DB.php?FLAG=GET_PRICE&id="+a,function(data){
+		
+		if (data != '') {
+			$("#actualprice").val(data);
+			$("#divprice").hide();
+		}		
+	});
+}
 
 var FormValidation = function () {
 
@@ -189,37 +265,49 @@ var FormValidation = function () {
         // for more info visit the official plugin documentation: 
         // http://docs.jquery.com/Plugins/Validation
 
-            var form3 = $('#frmpackage');
+            var form3 = $('#frmbooking');
             var error3 = $('.alert-danger', form3);
             var success3 = $('.alert-success', form3);
 			var user_type = $("#usertype").val();
-
-			form3.validate({
+			
+            form3.validate({
                 errorElement: 'span', //default input error message container
                 errorClass: 'help-block help-block-error', // default input error message class
                 focusInvalid: false, // do not focus the last invalid input
                 ignore: "", // validate all fields including form hidden input
                 rules: {                	
-                	packagename: {
-                		required: true
-                    },     
-    		        cost: {                        
-                        required: true,
-                        number: true
-                    },
-        		    serviceapplicable:{
-                		required: true
-                    },
-                    taxname: {
+                	customer: {
+                        required: true
+                    }, 
+                    service: {
+                        required: true
+                    }, 
+                    offerprice: {                        
+                        number:true
+                    }, 
+                    servicedate: {
                         required: true
                     },     
-    		        taxper: {                        
+    		        servicetime: {                        
+                        required: true,
+                        number:true
+                    },
+                    totalprice: {                        
                         required: true,
                         number: true
+                    },
+                    therapist: {                        
+                    	required: function(element) {
+                            if ($('#status').val() != 5) {
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        },
                     }
                },
 
-                messages: {
+                messages: { 
                 },
 
                 errorPlacement: function (error, element) { // render error placement for each input type
@@ -262,33 +350,6 @@ var FormValidation = function () {
                 },
 
                 submitHandler: function (form) {
-                	var opt = $("#serviceapplicable option:selected").length;
-                	
-    				if (opt == 0) {
-    					$("#divmsg").html("Please select atleast one option of service applicable");
-                        return false;
-    				} else {
-    					$("#divmsg").html("");
-    				}
-                    
-                    if ($("#creditprovided").val() == '' && $("#servicediscount").val() == "" && $("#productdiscount").val() == "") {
-                        $("#divmsg").html("Please Enter atleast one out of credit provided, service discount or product discount");
-                        return false;
-                    } else {
-                    	if (isNaN($("#creditprovided").val())) {
-                        	$("#divmsg").html("Please enter valid credit provided");
-                            return false;
-                        } else if (isNaN($("#servicediscount").val())) {
-                        	$("#divmsg").html("Please enter valid service discount");
-                            return false;
-                        } else if (isNaN($("#productdiscount").val())) {
-                        	$("#divmsg").html("Please enter valid product discount");
-                            return false;
-                        } else { 
-		                   	$("#divmsg").html("");
-                        }
-                    }
-                   
                     success3.show();
                     error3.hide();
                     form.submit(); // submit the form

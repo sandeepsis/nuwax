@@ -21,7 +21,7 @@
 <!-- BEGIN PAGE LEVEL STYLES -->
 
 <link rel="stylesheet" type="text/css" href="<?php echo ADMIN_URL;?>/assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
-
+<link rel="stylesheet" type="text/css" href="<?php echo ADMIN_URL;?>/assets/global/css/sandeep.css"/>
 <!-- END PAGE LEVEL STYLES -->
 <?php include('../common_second.php');?>
 </head>
@@ -79,9 +79,10 @@
                        ?>
                         <!-- BEGIN FORM-->
                         
-                        <form id="frmservice" name="frmservice" method="post" action="<?php echo ADMIN_URL;?>/packages/DB.php" class="form-horizontal">
-                            <div class="form-body">           
-                                	<div class="form-group">
+                        <form id=frmpackage name="frmpackage" method="post" action="<?php echo ADMIN_URL;?>/packages/DB.php" class="form-horizontal">
+                            <div class="form-body">         
+                            	<div id="divmsg" class="diverror"></div>  
+                                <div class="form-group">
                                     <label class="control-label col-md-3">Package Name<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
                                          <input type="text" class="form-control" placeholder="Package Name" name="packagename" id="packagename" value="<?php echo stripslashes($rows->name); ?>"/>    
@@ -95,27 +96,29 @@
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Credit Provided<span class="required" aria-required="true">*</span></label>
+                                    <label class="control-label col-md-3">Credit Provided</label>
                                     <div class="col-md-4">
                                          <input type="text" class="form-control" placeholder="Credit Provided" name="creditprovided" id="creditprovided" value="<?php echo stripslashes($rows->creditprovided); ?>" />    
                                     </div>
-                                </div>
-                                <?php $ids = explode(',',$rows->serviceapplicable);?>
+                                </div>     
+                                <?php $ids = explode(',',$rows->serviceapplicable);
+                               
+                                ?>                           
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Service Applicable<span class="required" aria-required="true">*</span></label>
+                                    <label class="control-label col-md-3">Services Applicable<span class="required" aria-required="true">*</span></label>
                                     <div class="col-md-4">
                                     	<select id="serviceapplicable" name="serviceapplicable[]" multiple="multiple" class="form-control">
                                     		<?php                                    		                                   		
 	                                    	$results=Package::getServices();
 	                                    	
-	                                    	if (count($results)>0) {
+	                                    	if (count($results)>0) {	                                    		
 	                                    		for ($index = 0; $index < count($results); $index++)
 	                                    		{
 	                                    			$mrows = $results[$index];
-	                                    			
+	                                    			echo $ids[$index];
 	                                    			if ($mrows['id'] == $ids[$index]) {
 	                                    			?>
-	                                    			<option value="<?php echo $mrows['id'];?>" selected="selected"><?php echo $mrows['servicename'];?></option>
+	                                    				<option value="<?php echo $mrows['id'];?>" selected="selected"><?php echo $mrows['servicename'];?></option>	                                    			
 	                                    			<?php 
 	                                    			} else {
 	                                    			?>
@@ -124,9 +127,8 @@
 	                                    			}
 	                                    		}
 	                                    	}                                    	
-	                                    	?>        
+	                                    	?>   
 										</select>
-                                        
                                     </div>
                                 </div>
                                 
@@ -205,7 +207,7 @@ var FormValidation = function () {
         // for more info visit the official plugin documentation: 
         // http://docs.jquery.com/Plugins/Validation
 
-            var form3 = $('#frmservice');
+            var form3 = $('#frmpackage');
             var error3 = $('.alert-danger', form3);
             var success3 = $('.alert-success', form3);
 
@@ -222,10 +224,6 @@ var FormValidation = function () {
                         required: true,
                         number: true
                     },
-    		        creditprovided: {
-        		        required: true,
-						number:true        		        
-        		    },
         		    serviceapplicable: {
                         required: true,
                         needsSelection: true
@@ -283,6 +281,24 @@ var FormValidation = function () {
                 },
 
                 submitHandler: function (form) {
+                	if ($("#creditprovided").val() == '' && $("#servicediscount").val() == "" && $("#productdiscount").val() == "") {
+                        $("#divmsg").html("Please Enter atleast one out of credit provided, service discount or product discount");
+                        return false;
+                    } else {
+                        if (isNaN($("#creditprovided").val())) {
+                        	$("#divmsg").html("Please enter valid credit provided");
+                            return false;
+                        } else if (isNaN($("#servicediscount").val())) {
+                        	$("#divmsg").html("Please enter valid service discount");
+                            return false;
+                        } else if (isNaN($("#productdiscount").val())) {
+                        	$("#divmsg").html("Please enter valid product discount");
+                            return false;
+                        } else { 
+		                   	$("#divmsg").html("");
+                        }
+                    }
+                   
                     success3.show();
                     error3.hide();
                     form.submit(); // submit the form

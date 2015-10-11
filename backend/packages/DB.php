@@ -6,7 +6,7 @@
 
 	if ($_REQUEST['FLAG']=='ADD_PACKAGE') {			
 		if (trim($_REQUEST['packagename'])=="") {
-			$_SESSION['msg']='Please select package name';
+			$_SESSION['msg']='Please enter package name';
 			$num='danger';
 			$url= ADMIN_URL."/packages/add.php";
 			$general->redirectUrl($url, $num);
@@ -30,16 +30,28 @@
 			}
 		}
 				
-		if (trim($_REQUEST['creditprovided'])=="") {
-			$_SESSION['msg']='Please enter credit';
+		if (trim($_REQUEST['creditprovided'])=="" && trim($_REQUEST['servicediscount'])=="" && trim($_REQUEST['productdiscount'])=="") {
+			$_SESSION['msg']='Please Enter atleast one out of credit provided, service discount or product discount';
 			$num='danger';
 			$url= ADMIN_URL."/packages/add.php";
 			$general->redirectUrl($url, $num);
 			exit;
-		}else{
+		}else{			
 			$pattern = '/^[0-9]+(?:\.[0-9]{0,2})?$/';
-			if (preg_match($pattern, trim($_REQUEST['creditprovided'])) == '0') {
-				$_SESSION['msg']='Please enter valid credit';
+			
+			if ($_REQUEST['creditprovided']!="") {
+				$credit = $_REQUEST['creditprovided'];
+				$msg = "credit provided";
+			} else if ($_REQUEST['servicediscount']!="") {
+				$credit = $_REQUEST['servicediscount'];
+				$msg = "service discount";
+			} else if ($_REQUEST['productdiscount']!="") {
+				$credit = $_REQUEST['productdiscount'];
+				$msg = "product discount";
+			}
+						
+			if (preg_match($pattern, trim($credit)) == '0') {
+				$_SESSION['msg']='Please enter valid '.$msg;
 				$num='danger';
 				$url= ADMIN_URL."/packages/add.php";
 				$general->redirectUrl($url, $num);
@@ -88,7 +100,7 @@
 		$fieldvalues = array('name' => $_REQUEST['packagename'],'cost' => $_REQUEST['cost'], 'creditprovided' => $_REQUEST['creditprovided'], 'serviceapplicable'=> $servicedata, "servicediscount" => $_REQUEST['servicediscount'], "productdiscount" => $_REQUEST['productdiscount'], "taxname" => $_REQUEST['taxname'],"taxpercent" => $_REQUEST['taxper'],"is_deleted" => '0', "date_added" => date('Y-m-d H:i:s'));
 						
 		$updated = $Package->addPackage($fieldvalues);
-		
+				
 		if ($updated) {			
 			$general->addLogAction($_SESSION['adm_user_id'],'Added', $updated, 'Package Management', $_SESSION['adm_status']);
 			$error  = 'success';
@@ -107,7 +119,7 @@
 	
 	if ($_REQUEST['FLAG']=='EDIT_PACKAGE') {		
 		if (trim($_REQUEST['packagename'])=="")	{
-			$_SESSION['msg']='Please select package name';
+			$_SESSION['msg']='Please enter package name';
 			$num='danger';
 			$num.='&id='.$_REQUEST['id'];
 			$url= ADMIN_URL."/packages/edit.php";
@@ -134,17 +146,29 @@
 			}
 		}
 		
-		if (trim($_REQUEST['creditprovided'])=="") {
-			$_SESSION['msg']='Please enter credit';
+		if (trim($_REQUEST['creditprovided'])=="" && trim($_REQUEST['servicediscount'])=="" && trim($_REQUEST['productdiscount'])=="") {
+			$_SESSION['msg']='Please Enter atleast one out of credit provided, service discount or product discount';
 			$num='danger';
 			$num.='&id='.$_REQUEST['id'];
 			$url= ADMIN_URL."/packages/edit.php";
 			$general->redirectUrl($url, $num);
 			exit;
-		} else {
+		}else{			
 			$pattern = '/^[0-9]+(?:\.[0-9]{0,2})?$/';
-			if (preg_match($pattern, trim($_REQUEST['creditprovided'])) == '0') {
-				$_SESSION['msg']='Please enter valid credit';
+			
+			if ($_REQUEST['creditprovided']!="") {
+				$credit = $_REQUEST['creditprovided'];
+				$msg = "credit provided";
+			} else if ($_REQUEST['servicediscount']!="") {
+				$credit = $_REQUEST['servicediscount'];
+				$msg = "service discount";
+			} else if ($_REQUEST['productdiscount']!="") {
+				$credit = $_REQUEST['productdiscount'];
+				$msg = "product discount";
+			}
+						
+			if (preg_match($pattern, trim($credit)) == '0') {
+				$_SESSION['msg']='Please enter valid '.$msg;
 				$num='danger';
 				$num.='&id='.$_REQUEST['id'];
 				$url= ADMIN_URL."/packages/edit.php";
@@ -194,14 +218,16 @@
 			}
 		}
 		
+		
+		
 		$servicedata = implode(',', $_REQUEST['serviceapplicable']);
-				
+		
 		$cond		= array("id" => $_REQUEST['id']);
-
+		
 		$fieldvalues = array('name' => $_REQUEST['packagename'],'cost' => $_REQUEST['cost'], 'creditprovided' => $_REQUEST['creditprovided'], 'serviceapplicable'=> $servicedata, "servicediscount" => $_REQUEST['servicediscount'], "productdiscount" => $_REQUEST['productdiscount'], "taxname" => $_REQUEST['taxname'],"taxpercent" => $_REQUEST['taxper']);
 		
 		$updated =$Package->updatePackage($fieldvalues, $cond);
-
+				
 		if ($updated) {
 				$general->addLogAction($_SESSION['adm_user_id'], 'Edited', $_REQUEST['id'], 'Package Management', $_SESSION['adm_status']);
 				$error = 'success';
@@ -354,6 +380,31 @@
 				
 		$updated = $Package->packageAllocation($fieldvalues);
 	
+		if ($updated) {
+			if ($_REQUEST['creditprovided'] != "") {
+				$r = $Package->getcreditByPackageid($updated);
+				
+				if (count($r) == 0) {
+					$field_values = array('customerid' => $_REQUEST['customer'],'packageid' => $_REQUEST['id'], 'credit' => $_REQUEST['creditprovided'],'credittype' => '0','date_added' => date('Y-m-d H:i:s'));
+				
+					$add = $Package->addcreditmanagement($field_values);
+						
+					if ($add) {
+						$data 		= $Package->getCutomerById($_REQUEST['customer']);
+						$usercredit = $data->credit;
+				
+						$newcredit	= $usercredit + $_REQUEST['creditprovided'];
+				
+						$fieldvalues1 = array('credit' => $newcredit);
+						$cond = array('id'=> $_REQUEST['customer']);
+							
+						$Package->updateCustomer($fieldvalues1,$cond);
+					}
+				}
+			}
+		}
+		
+		
 		if ($updated) {
 			$general->addLogAction($_SESSION['adm_user_id'],'Added', $updated, 'Package Allocation', $_SESSION['adm_status']);
 			$error  = 'success';
