@@ -22,6 +22,7 @@
 
 <link rel="stylesheet" type="text/css" href="<?php echo ADMIN_URL;?>/assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
 <link rel="stylesheet" type="text/css" href="<?php echo ADMIN_URL;?>/assets/global/css/dhtmlxcalendar.css">
+<link rel="stylesheet" type="text/css" href="<?php echo ADMIN_URL;?>/assets/global/css/sandeep.css">
 
 <!-- END PAGE LEVEL STYLES -->
 <?php include('../common_second.php');?>
@@ -84,7 +85,7 @@
                             <div class="form-body">           
                                 	<div class="form-group">
                                     <label class="control-label col-md-3">Customer<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                          <select name="customer" id="customer" disabled class="form-control">
                                     		<option value="">Select Customer</option>
 	                                    	<?php
@@ -110,72 +111,148 @@
                                     </div>
                                 </div>
                                 
-                                <div class="form-group">
-                                    <label class="control-label col-md-3">Service<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
-                                         <select name="service" id="service" disabled class="form-control">
-                                    		<option value="">Select Service</option>
-	                                    	<?php
-	                                    	$results=Booking::getServices();
-	                                    	
-	                                    	if (count($results)>0) {
-	                                    		for ($index = 0; $index < count($results); $index++)
-	                                    		{
-	                                    			$myrows = $results[$index];
-	                                    			if ($myrows['id'] == $rows->serviceid) {
-	                                    			?>
-	                                    				<option value="<?php echo $myrows['id'];?>" selected="selected"><?php echo $myrows['servicename'];?></option>
-	                                    			<?php 
-	                                    			} else {
-	                                    			?>
-	                                    				<option value="<?php echo $myrows['id'];?>"><?php echo $myrows['servicename'];?></option>
-	                                    			<?php
-	                                    			}
-	                                    		}
-	                                    	}                                    	
-	                                    	?>                                    		
-	                                    </select>      
+                                 <div class="form-group">
+                                    <label class="control-label col-md-3">Services<span class="required" aria-required="true">*</span></label>
+                                    <div class="col-md-6" id="divadd">
+                                    	<?php
+		                                $serviceresult = Booking::getBookingservicesbyBookingid($_REQUEST['id']);
+		                                $scount = count($serviceresult);
+		                                $c = 1;
+		                                if ($scount>0) {
+			                                for ($t = 0; $t < $scount; $t++)
+			                                {
+		                                    	$m_rows = $serviceresult[$t];
+		                                    	$service_id 	= $m_rows['serviceid'];	
+		                                    	$actual_price	= $m_rows['actualprice'];
+		                                    	$offer_price	= $m_rows['offerprice'];
+		                                    	$status			= $m_rows['status'];
+		                                    	$bookingserviceid	= $m_rows['id'];
+		                                ?>
+                                    
+                                    	<div id='divrow<?php echo $c;?>' class="divpadding divmsglength">
+                                    		<div class="col-md-4 nopadding">
+                                    		 <input type="hidden" name="servicerowid[]" id="servicerowid<?php echo $c;?>" value="<?php echo $bookingserviceid;?>"/>
+                                    		 <input type="hidden" name="serviceids[]" id="serviceids<?php echo $c;?>" value="<?php echo $service_id;?>"/>
+	                                         <select name="service[]" id="service<?php echo $c;?>" class="form-control" onchange="javascript: fun_getactualprice(this.value,'<?php echo $c;?>');">
+	                                    		<option value="">Select Service</option>
+		                                    	<?php
+		                                    	$results=Booking::getServices();
+		                                    	
+		                                    	if (count($results)>0) {
+		                                    		for ($index = 0; $index < count($results); $index++)
+		                                    		{
+		                                    			$myrows = $results[$index];
+		                                    			
+		                                    			if ($myrows['id'] == $service_id) {
+		                                    			?>
+		                                    				<option value="<?php echo $myrows['id'];?>" selected="selected"><?php echo $myrows['servicename'];?></option>
+		                                    			<?php 
+		                                    			} else {		                                    			
+		                                    			?>
+		                                    				<option value="<?php echo $myrows['id'];?>"><?php echo $myrows['servicename'];?></option>
+		                                    			<?php 
+		                                    			}
+		                                    		}
+		                                    	}                                    	
+		                                    	?>                                    		
+		                                    </select>   
+		                                    </div>
+		                                    <div class="col-md-2 nopadding">
+			                                    <input type="text" class="form-control" readonly placeholder="Actual Price" name="actualprice[]" id="actualprice<?php echo $c;?>" value="<?php echo $actual_price;?>" />
+	                                         	<div id="divprice<?php echo $c;?>"></div>  
+	                                        </div>
+	                                        <div class="col-md-2 nopadding">
+			                                    <input type="text" class="form-control sumofprice" placeholder="Offer Price" name="offerprice[]" id="offerprice<?php echo $c;?>" value="<?php echo $offer_price;?>" onkeyup="javascript: fun_totalprice('<?php echo $c;?>');" value="" />
+	                                        </div>
+	                                        <div class="col-md-3 nopadding">
+			                                   <select name="bookingservicestatus[]" id="bookingservicestatus<?php echo $c;?>" onchange="javascript: fun_cancelrecord(this.value,<?php echo $c;?>);" class="form-control chkdisable">
+			                                   		<option value="0" <?php if($status == 0) echo "selected='selected'"?>>Approve</option>
+			                                   		<option value="1" <?php if($status == 1) echo "selected='selected'"?>>Cancel</option>
+			                                   </select> 
+	                                        </div>
+	                                        <div class="col-md-1 a_padding"><a href="javascript:void(0);" onclick="javascript: fun_deleterow(<?php echo $c;?>,<?php echo $bookingserviceid;?>); fun_totalprice(<?php echo $c;?>);" title="Delete">Delete</a></div>	
+	                                    </div>   
+	                                    
+	                                    <?php 
+	                                    $c++;
+			                                }
+		                                } else {
+		                                	?>
+		                                	<div id='divrow1' class="divpadding divmsglength">
+	                                    		<div class="col-md-4 nopadding">
+	                                    		<input type="hidden" name="servicerowid[]" id="servicerowid1" value="0"/>
+	                                    		<input type="hidden" name="serviceids[]" id="serviceids1"/>
+		                                         <select name="service[]" id="service1" class="form-control" onchange="javascript: fun_getactualprice(this.value,'1');">
+		                                    		<option value="">Select Service</option>
+			                                    	<?php
+			                                    	$results=Booking::getServices();
+			                                    	
+			                                    	if (count($results)>0) {
+			                                    		for ($index = 0; $index < count($results); $index++)
+			                                    		{
+			                                    			$drows = $results[$index];
+			                                    			?>
+			                                    			<option value="<?php echo $drows['id'];?>"><?php echo $drows['servicename'];?></option>
+			                                    			<?php 
+			                                    		}
+			                                    	}                                    	
+			                                    	?>                                    		
+			                                    </select>   
+			                                    </div>
+			                                    <div class="col-md-2 nopadding">
+				                                    <input type="text" class="form-control" readonly placeholder="Actual Price" name="actualprice[]" id="actualprice1"/>
+		                                         	<div id="divprice1"></div>  
+		                                        </div>
+		                                        <div class="col-md-2 nopadding">
+				                                    <input type="text" class="form-control sumofprice" placeholder="Offer Price" name="offerprice[]" id="offerprice1" onkeyup="javascript: fun_totalprice('1');" value="" />
+		                                        </div>
+		                                        <div class="col-md-3 nopadding">
+				                                   <select name="bookingservicestatus[]" id="bookingservicestatus1" onchange="javascript: fun_cancelrecord(this.value,'1');" class="form-control">
+				                                   		<option value="0">Approve</option>
+				                                   		<option value="1">Cancel</option>
+				                                   </select> 
+		                                        </div>
+		                                        <div class="col-md-1 a_padding"></div>	
+		                                    </div>   
+		                                	<?php 
+		                                }
+	                                    ?>
+	                                    
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Actual Price<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
-                                         <input type="text" class="form-control" readonly placeholder="Actual Price" name="actualprice" id="actualprice" value="<?php echo stripslashes($rows->actualprice); ?>" />    
+                                    <label class="control-label col-md-3"></label>
+                                    <div class="col-md-1">
+                                         <a href="javascript:void(0);" onClick="javascript:fun_add();" title="Add">+ Add</a>  
                                     </div>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label class="control-label col-md-3">Offer Price<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Offer Price" name="offerprice" id="offerprice" value="<?php echo stripslashes($rows->offerprice); ?>" />    
-                                    </div>
+                                    <div class="col-md-3"><span class="diverror"  id="divmsg"></span></div>
                                 </div>
                                                                 
                                 <div class="form-group">
                                     <label class="control-label col-md-3">Service Date<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                          <input type="text" class="form-control" placeholder="Service Date" name="servicedate" id="servicedate" value="<?php echo stripslashes($rows->servicedate); ?>" />    
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
                                     <label class="control-label col-md-3">Service Time<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                          <input type="text" class="form-control" placeholder="Service Time" name="servicetime" id="servicetime" value="<?php echo stripslashes($rows->servicetime); ?>"/>    
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
                                     <label class="control-label col-md-3">Total Price<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Total Price" name="totalprice" id="totalprice" value="<?php echo stripslashes($rows->totalprice); ?>" />    
+                                    <div class="col-md-6">
+                                         <input type="text" class="form-control" readonly placeholder="Total Price" name="totalprice" id="totalprice" value="<?php echo stripslashes($rows->totalprice); ?>" />    
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
                                     <label class="control-label col-md-3">Status<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                          <select name="status" id="status" class="form-control" onchange="javascript: fun_showtherapist(this.value);">
                                          	<option value="1" <?php if($rows->status == 1) echo "selected='selected'"?>>New</option>
                                          	<option value="2" <?php if($rows->status == 2) echo "selected='selected'"?>>Confirmed</option>
@@ -188,7 +265,7 @@
                                 
                                 <div class="form-group" id="divtherapist">
                                     <label class="control-label col-md-3">Therapist<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                          <select name="therapist" id="therapist" class="form-control">
                                     		<option value="">Select Therapist</option>
 	                                    	<?php
@@ -220,10 +297,15 @@
                                     <div class="col-md-offset-3 col-md-4">
                                     	<input type="hidden" name="FLAG" value="EDIT_BOOKING" />
                                     	<input type="hidden" name="hdnlaststatus" id="hdnlaststatus" value="<?php echo $rows->status;?>" />
-                                    	<input type="hidden" name="customer_id" id="customer_id" value="<?php echo $rows->customerid;?>"/>   
-	                                    <input type="hidden" name="service_id" id="service_id" value="<?php echo $rows->serviceid;?>"/>
+                                    	<input type="hidden" name="customer_id" id="customer_id" value="<?php echo $rows->customerid;?>"/> 
 	                                    <input name="id" type="hidden" value="<?php echo $_REQUEST['id'];?>" />                                        
-                                        <button type="submit" class="btn green">Submit</button>
+                                        
+                                        <?php 
+                                        if ($rows->status != '4' && $rows->status != '5') {
+                                        ?>
+                                        	<button type="submit" class="btn green">Submit</button>
+                                        <?php 
+                                        }?>
                                         <button type="button" class="btn default" name="cancel" onClick="javascript: window.location.href='<?php echo ADMIN_URL;?>/bookings/index.php'">Cancel</button>
                                     </div>
                                 </div>
@@ -261,12 +343,75 @@ jQuery(document).ready(function() {
 	} else {
 		$("#divtherapist").hide();
 	}
+
 	
+    var w = 1;
+	$(".chkdisable").each(function(){			
+		t = $(this).val();		
+		if (t == 1) {
+			$("#offerprice"+w).removeClass('sumofprice');	
+			fun_totalprice();
+			$("#service"+w).attr('disabled','disabled');
+			$("#offerprice"+w).attr('readonly','readonly');
+		}
+
+		w++;
+    });	
+		
    Metronic.init(); // init metronic core components
    Layout.init(); // init current layout
    FormValidation.init();
 
 });
+
+function fun_totalprice(a)
+{	
+	var sum = 0;
+	$(".sumofprice").each(function(){		
+		sum += Number($(this).val());		
+		$("#totalprice").val(sum);
+    });	
+}
+
+function fun_cancelrecord(s,a)
+{
+	if (s == 0) {
+		$("#offerprice"+a).addClass('sumofprice');	
+		fun_totalprice();
+		$("#service"+a).removeAttr('disabled','disabled');
+		$("#offerprice"+a).removeAttr('readonly','readonly');
+	} else {
+		$("#offerprice"+a).removeClass('sumofprice');	
+		fun_totalprice();
+		$("#service"+a).attr('disabled','disabled');
+		$("#offerprice"+a).attr('readonly','readonly');
+	}
+}
+
+var cnt = <?php echo $scount+1;?>;
+function fun_add()
+{
+	var service		= "service"+cnt;
+	var actualprice = "actualprice"+cnt;
+	var offerprice 	= "offerprice"+cnt;
+	var dprice 		= "divprice"+cnt;
+	var x 			= "divrow"+cnt;
+	var bookingstatus = "bookingservicestatus"+cnt;		
+	var field = '<div id='+x+' class="divpadding divmsglength"><div class="col-md-4 nopadding"><input type="hidden" name="servicerowid[]" id="servicerowid'+cnt+'" value="0"/><input type="hidden" name="serviceids[]" id="serviceids'+cnt+'" /><select name="service[]" id='+service+' class="form-control" onchange="javascript: fun_getactualprice(this.value,'+cnt+');"> <option value="">Select Service</option><?php $results=Booking::getServices(); if (count($results)>0) {	for ($index = 0; $index < count($results); $index++){ $rows = $results[$index];?><option value="<?php echo $rows['id'];?>"><?php echo $rows['servicename'];?></option><?php } } ?> </select></div><div class="col-md-2 nopadding"> <input type="text" class="form-control" readonly placeholder="Actual Price" name="actualprice[]" id='+actualprice+' /><div id='+dprice+'></div></div><div class="col-md-2 nopadding"><input type="text" class="form-control sumofprice" placeholder="Offer Price" name="offerprice[]" id='+offerprice+' onkeyup="javascript: fun_totalprice('+cnt+');" value="" /></div><div class="col-md-3 nopadding"><select name="bookingservicestatus[]" id='+bookingstatus+' onchange="javascript: fun_cancelrecord(this.value,'+cnt+');" class="form-control chkdisable"><option value="0">Approve</option><option value="1">Cancel</option></select></div><div class="col-md-1 a_padding"><a href="javascript:void(0);" onclick="javascript: fun_deleterow('+cnt+'); fun_totalprice('+cnt+');" title="Delete">Delete</a></div></div>';
+
+	$('#divadd').append(field);
+
+	if ($(".divmsglength").length > '0') {
+    	$("#divmsg").html("");
+	}
+	
+	cnt++;
+}
+
+function fun_deleterow(a)
+{
+	$('#divrow'+a).remove();
+}
 
 function fun_showtherapist(a)
 {
@@ -275,6 +420,32 @@ function fun_showtherapist(a)
 	} else {
 		$("#divtherapist").hide();
 	}
+}
+
+function fun_getactualprice(a,b)
+{	
+	$("#serviceids"+b).val(a);
+	if (a != "") {		
+		$("#divprice"+b).load("<?php echo ADMIN_URL;?>/bookings/DB.php?FLAG=GET_PRICE&id="+a,function(data){
+			
+			if (data != 'error') {
+
+				//alert(data);
+				
+				$("#actualprice"+b).val(data);
+				$("#offerprice"+b).val(data);
+
+				fun_totalprice();
+				$("#divprice"+b).hide();
+			}	
+			else {
+				alert("test");
+			}	
+		});
+	} else {
+		$("#actualprice"+b).val('');
+		$("#offerprice"+b).val('');
+	}		
 }
 
 var FormValidation = function () {
@@ -294,7 +465,11 @@ var FormValidation = function () {
                 focusInvalid: false, // do not focus the last invalid input
                 ignore: "", // validate all fields including form hidden input
                 rules: { 
-                    offerprice: {                        
+                	"service[]": {
+                        required: true
+                    }, 
+                    "offerprice[]": {    
+                    	required: true,  
                         number:true
                     }, 
                     servicedate: {
@@ -303,10 +478,6 @@ var FormValidation = function () {
     		        servicetime: {                        
                         required: true,
                         number:true
-                    },
-                    totalprice: {                        
-                        required: true,
-                        number: true
                     },
                     therapist: {                        
                     	required: function(element) {
@@ -363,6 +534,17 @@ var FormValidation = function () {
                 },
 
                 submitHandler: function (form) {
+
+                	if ($(".divmsglength").length == '0') {
+                		$("#totalprice").val('');
+                    	$("#divmsg").html("Please select atleast one service");
+                    	 return false;
+                	}
+                	else
+                	{
+                		$("#divmsg").html("");
+                	}
+                    
                     success3.show();
                     error3.hide();
                     form.submit(); // submit the form

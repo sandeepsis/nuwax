@@ -19,6 +19,7 @@
 
 <link rel="stylesheet" type="text/css" href="<?php echo ADMIN_URL;?>/assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
 <link rel="stylesheet" type="text/css" href="<?php echo ADMIN_URL;?>/assets/global/css/dhtmlxcalendar.css">
+<link rel="stylesheet" type="text/css" href="<?php echo ADMIN_URL;?>/assets/global/css/sandeep.css">
 
 <!-- END PAGE LEVEL STYLES -->
 <?php include('../common_second.php');?>
@@ -81,7 +82,7 @@
                             	                                                                                               
                                 <div class="form-group">
                                     <label class="control-label col-md-3">Customer<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
+                                    <div class="col-md-5">
                                          <select name="customer" id="customer" class="form-control">
                                     		<option value="">Select Customer</option>
 	                                    	<?php
@@ -102,66 +103,70 @@
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Service<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
-                                         <select name="service" id="service" class="form-control" onchange="javascript:fun_getactualprice(this.value);">
-                                    		<option value="">Select Service</option>
-	                                    	<?php
-	                                    	$results=Booking::getServices();
-	                                    	
-	                                    	if (count($results)>0) {
-	                                    		for ($index = 0; $index < count($results); $index++)
-	                                    		{
-	                                    			$rows = $results[$index];
-	                                    			?>
-	                                    			<option value="<?php echo $rows['id'];?>"><?php echo $rows['servicename'];?></option>
-	                                    			<?php 
-	                                    		}
-	                                    	}                                    	
-	                                    	?>                                    		
-	                                    </select>      
+                                    <label class="control-label col-md-3">Services<span class="required" aria-required="true">*</span></label>
+                                    <div class="col-md-5" id="divadd">
+                                    	<div id='divrow1' class="divpadding">
+                                    		<div class="col-md-4 nopadding">
+	                                         <select name="service[]" id="service1" class="form-control" onchange="javascript: fun_getactualprice(this.value,'1');">
+	                                    		<option value="">Select Service</option>
+		                                    	<?php
+		                                    	$results=Booking::getServices();
+		                                    	
+		                                    	if (count($results)>0) {
+		                                    		for ($index = 0; $index < count($results); $index++)
+		                                    		{
+		                                    			$rows = $results[$index];
+		                                    			?>
+		                                    			<option value="<?php echo $rows['id'];?>"><?php echo $rows['servicename'];?></option>
+		                                    			<?php 
+		                                    		}
+		                                    	}                                    	
+		                                    	?>                                    		
+		                                    </select>   
+		                                    </div>
+		                                    <div class="col-md-3 nopadding">
+			                                    <input type="text" class="form-control" readonly placeholder="Actual Price" name="actualprice[]" id="actualprice1"/>
+	                                         	<div id="divprice1"></div>  
+	                                        </div>
+	                                        <div class="col-md-3 nopadding">
+			                                    <input type="text" class="form-control sumofprice" placeholder="Offer Price" name="offerprice[]" id="offerprice1" onkeyup="javascript: fun_totalprice('1');" value="" />
+	                                        </div>
+	                                        <div class="col-md-1 a_padding"></div>	
+	                                    </div>   
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
-                                    <label class="control-label col-md-3">Actual Price<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
-                                         <input type="text" class="form-control" readonly placeholder="Actual Price" name="actualprice" id="actualprice"/>
-                                         <div id="divprice"></div>    
+                                    <label class="control-label col-md-3"></label>
+                                    <div class="col-md-5">
+                                         <a href="javascript:void(0);" onClick="javascript:fun_add();" title="Add">+ Add</a>  
                                     </div>
                                 </div>
-                                
-                                <div class="form-group">
-                                    <label class="control-label col-md-3">Offer Price<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Offer Price" name="offerprice" id="offerprice" value="" />    
-                                    </div>
-                                </div>
-                                                                
+                                                                                                
                                 <div class="form-group">
                                     <label class="control-label col-md-3">Service Date<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
+                                    <div class="col-md-5">
                                          <input type="text" class="form-control" placeholder="Service Date" name="servicedate" id="servicedate" value="" />    
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
                                     <label class="control-label col-md-3">Service Time<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
+                                    <div class="col-md-5">
                                          <input type="text" class="form-control" placeholder="Service Time" name="servicetime" id="servicetime"/>    
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
                                     <label class="control-label col-md-3">Total Price<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
-                                         <input type="text" class="form-control" placeholder="Total Price" name="totalprice" id="totalprice" value="" />    
+                                    <div class="col-md-5">
+                                         <input type="text" class="form-control" placeholder="Total Price" readonly name="totalprice" id="totalprice" value="" />    
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
                                     <label class="control-label col-md-3">Status<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
+                                    <div class="col-md-5">
                                          <select name="status" id="status" class="form-control" onchange="javascript: fun_showtherapist(this.value);">
                                          	<option value="1">New</option>
                                          	<option value="2">Confirmed</option>
@@ -174,7 +179,7 @@
                                 
                                 <div class="form-group" id="divtherapist">
                                     <label class="control-label col-md-3">Therapist<span class="required" aria-required="true">*</span></label>
-                                    <div class="col-md-4">
+                                    <div class="col-md-5">
                                          <select name="therapist" id="therapist" class="form-control">
                                     		<option value="">Select Therapist</option>
 	                                    	<?php
@@ -238,6 +243,35 @@ jQuery(document).ready(function() {
    FormValidation.init();
 });
 
+function fun_totalprice(a)
+{	
+	var sum = 0;
+	$(".sumofprice").each(function(){		
+		sum += Number($(this).val());
+		$("#totalprice").val(sum);
+    });	
+}
+
+var cnt = 2;
+function fun_add()
+{
+	var service		= "service"+cnt;
+	var actualprice = "actualprice"+cnt;
+	var offerprice 	= "offerprice"+cnt;
+	var dprice 		= "divprice"+cnt;
+	var x 			= "divrow"+cnt;
+			
+	var field = '<div id='+x+' class="divpadding"><div class="col-md-4 nopadding"><select name="service[]" id='+service+' class="form-control" onchange="javascript: fun_getactualprice(this.value,'+cnt+');"> <option value="">Select Service</option><?php $results=Booking::getServices(); if (count($results)>0) {	for ($index = 0; $index < count($results); $index++){ $rows = $results[$index];?><option value="<?php echo $rows['id'];?>"><?php echo $rows['servicename'];?></option><?php } } ?> </select></div><div class="col-md-3 nopadding"> <input type="text" class="form-control" readonly placeholder="Actual Price" name="actualprice[]" id='+actualprice+' /><div id='+dprice+'></div></div><div class="col-md-3 nopadding"><input type="text" class="form-control sumofprice" placeholder="Offer Price" name="offerprice[]" id='+offerprice+' onkeyup="javascript: fun_totalprice('+cnt+');" value="" /></div><div class="col-md-1 a_padding"><a href="javascript:void(0);" onclick="javascript: fun_deleterow('+cnt+'); fun_totalprice('+cnt+');" title="Delete">Delete</a></div></div>';
+
+	$('#divadd').append(field);
+	cnt++;
+}
+
+function fun_deleterow(a)
+{	
+	$('#divrow'+a).remove();
+}
+
 function fun_showtherapist(a)
 {
 	if (a == 5) {
@@ -247,15 +281,24 @@ function fun_showtherapist(a)
 	}
 }
 
-function fun_getactualprice(a)
+function fun_getactualprice(a,b)
 {
-	$("#divprice").load("<?php echo ADMIN_URL;?>/bookings/DB.php?FLAG=GET_PRICE&id="+a,function(data){
-		
-		if (data != '') {
-			$("#actualprice").val(data);
-			$("#divprice").hide();
-		}		
-	});
+	//var t='';		
+	if (a != "") {
+		$("#divprice"+b).load("<?php echo ADMIN_URL;?>/bookings/DB.php?FLAG=GET_PRICE&id="+a,function(data){
+			
+			if (data != '') {
+				$("#actualprice"+b).val(data);
+				$("#offerprice"+b).val(data);
+
+				fun_totalprice();
+				$("#divprice"+b).hide();
+			}		
+		});
+	} else {
+		$("#actualprice"+b).val('');
+		$("#offerprice"+b).val('');
+	}		
 }
 
 var FormValidation = function () {
@@ -279,10 +322,11 @@ var FormValidation = function () {
                 	customer: {
                         required: true
                     }, 
-                    service: {
+                    "service[]": {
                         required: true
                     }, 
-                    offerprice: {                        
+                    "offerprice[]": {
+                    	required: true,      
                         number:true
                     }, 
                     servicedate: {
@@ -291,10 +335,6 @@ var FormValidation = function () {
     		        servicetime: {                        
                         required: true,
                         number:true
-                    },
-                    totalprice: {                        
-                        required: true,
-                        number: true
                     },
                     therapist: {                        
                     	required: function(element) {

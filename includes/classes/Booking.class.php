@@ -14,6 +14,12 @@ class Booking {
 		return $saved;
 	}
 	
+	public function addBookingservices($fieldvalues)
+	{
+		$saved = $this->dbBean->InsertRow("bookingservices", $fieldvalues);
+		return $saved;
+	}
+	
 	public function addcreditmanagement($fieldvalues)
 	{
 		$saved = $this->dbBean->InsertRow("creditmanagement", $fieldvalues);
@@ -32,12 +38,19 @@ class Booking {
 		return $edited;
 	}
 
+	public function updateBookingservices($fieldvalues, $cond)
+	{
+		$edited = $this->dbBean->UpdateRows("bookingservices", $fieldvalues, $cond);
+		return $edited;
+	}
+	
+	
 	public static function getBookings()
 	{
 		$resultarray=array();
 		global $dbBean;
 		
-		$query="SELECT *,date_format(servicedate,'%d-%m-%Y') servicedate,(select name from customer where id=customerid) customername,(select servicename from services where id=serviceid) servicename FROM bookings where is_deleted=0 order by id desc";
+		$query="SELECT *,date_format(servicedate,'%d-%m-%Y') servicedate,(select name from customer where id=customerid) customername FROM bookings where is_deleted=0 order by id desc";
 		
 		if (!$dbBean->QueryArray($query)) $dbBean->Kill();
 		if ($dbBean->RowCount()>0)
@@ -51,7 +64,7 @@ class Booking {
 	{
 		$resultarray=array();
 		global $dbBean;
-		$query="SELECT *,(select name from customer where id=customerid) customername,(select servicename from services where id=serviceid) servicename FROM bookings WHERE is_deleted=0 and id=" . intval($id);
+		$query="SELECT *,(select name from customer where id=customerid) customername FROM bookings WHERE is_deleted=0 and id=" . intval($id);
 		
 		if (! $resultarray = $dbBean->QuerySingleRow($query)) $dbBean->Kill();
 		return $resultarray;		
@@ -108,7 +121,7 @@ class Booking {
 		return $resultarray;
 	}
 	
-	public static function getCutomerById($id=0)
+	public static function getCustomerById($id=0)
 	{
 		$resultarray=array();
 		global $dbBean;
@@ -139,6 +152,22 @@ class Booking {
 			$resultarray = $dbBean->RecordsArray(MYSQLI_ASSOC);
 		}
 		
+		return $resultarray;
+	}
+	
+	public static function getBookingservicesbyBookingid($id)
+	{
+		$resultarray=array();
+		global $dbBean;
+	
+		$query="SELECT * FROM bookingservices where bookingid=".intval($id);
+	
+		$w = $dbBean->QueryArray($query);
+	
+		if ($dbBean->RowCount()>0)
+		{
+			$resultarray = $dbBean->RecordsArray(MYSQLI_ASSOC);
+		}
 		return $resultarray;
 	}
 }

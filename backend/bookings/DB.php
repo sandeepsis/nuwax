@@ -13,7 +13,7 @@
 		    exit;
 		}
 		
-		if (trim($_REQUEST['service'])=="") {
+		if (trim($_REQUEST['service'][0])=="") {
 			$_SESSION['msg']='Please select service';
 			$num='danger';
 			$url= ADMIN_URL."/bookings/add.php";
@@ -21,26 +21,15 @@
 			exit;
 		}
 		
-		if (trim($_REQUEST['actualprice'])=="") {
-			$_SESSION['msg']='Please enter actual price';
+		if (trim($_REQUEST['offerprice'][0])=="") {
+			$_SESSION['msg']='Please enter offer price';
 			$num='danger';
 			$url= ADMIN_URL."/bookings/add.php";
 			$general->redirectUrl($url, $num);
 			exit;
-		} else{
+		} else {
 			$pattern = '/^[0-9]+(?:\.[0-9]{0,2})?$/';
-			if (preg_match($pattern, trim($_REQUEST['totalprice'])) == '0') {
-				$_SESSION['msg']='Please enter valid product volume';
-				$num='danger';
-				$url= ADMIN_URL."/bookings/add.php";
-				$general->redirectUrl($url, $num);
-				exit;
-			}
-		}
-		
-		if (trim($_REQUEST['offerprice'])!="") {
-			$pattern = '/^[0-9]+(?:\.[0-9]{0,2})?$/';
-			if (preg_match($pattern, trim($_REQUEST['totalprice'])) == '0') {
+			if (preg_match($pattern, trim($_REQUEST['offerprice'][0])) == '0') {
 				$_SESSION['msg']='Please enter valid offer price';
 				$num='danger';
 				$url= ADMIN_URL."/bookings/add.php";
@@ -65,23 +54,6 @@
 			exit;
 		}
 				
-		if (trim($_REQUEST['totalprice'])=="") {
-			$_SESSION['msg']='Please enter total price';
-			$num='danger';
-			$url= ADMIN_URL."/bookings/add.php";
-			$general->redirectUrl($url, $num);
-			exit;
-		}else{
-			$pattern = '/^[0-9]+(?:\.[0-9]{0,2})?$/';
-			if (preg_match($pattern, trim($_REQUEST['totalprice'])) == '0') {
-				$_SESSION['msg']='Please enter valid total price';
-				$num='danger';
-				$url= ADMIN_URL."/bookings/add.php";
-				$general->redirectUrl($url, $num);
-				exit;
-			}
-		}
-		
 		if ($_REQUEST['status'] == '5') {
 			if (trim($_REQUEST['therapist'])=="") {
 				$_SESSION['msg']='Please select therapist';
@@ -103,10 +75,71 @@
 		} else if ($_REQUEST['status'] == '5') {
 			$status = "Complete";
 		}
-					
-		$fieldvalues = array('customerid' => $_REQUEST['customer'],'serviceid' => $_REQUEST['service'],'staffid' => $_REQUEST['therapist'], 'actualprice' => $_REQUEST['actualprice'], 'offerprice'=> $_REQUEST['offerprice'], "servicedate" => $_REQUEST['servicedate'], "servicetime" => $_REQUEST['servicetime'], "totalprice" => $_REQUEST['totalprice'],"status" => $_REQUEST['status'], "is_deleted" => '0', "date_added" => date('Y-m-d H:i:s'));
-						
+				
+		if ($_REQUEST['therapist'] == '') {
+			$fieldvalues = array('customerid' => $_REQUEST['customer'], "servicedate" => $_REQUEST['servicedate'], "servicetime" => $_REQUEST['servicetime'], "totalprice" => $_REQUEST['totalprice'],"status" => $_REQUEST['status'], "is_deleted" => '0', "date_added" => date('Y-m-d H:i:s'));
+		} else {
+			$fieldvalues = array('customerid' => $_REQUEST['customer'],'staffid' => $_REQUEST['therapist'], "servicedate" => $_REQUEST['servicedate'], "servicetime" => $_REQUEST['servicetime'], "totalprice" => $_REQUEST['totalprice'],"status" => $_REQUEST['status'], "is_deleted" => '0', "date_added" => date('Y-m-d H:i:s'));
+		}
+								
 		$updated = $Booking->addBooking($fieldvalues);
+		
+		if ($updated) {
+			for($i=0;$i<count($_REQUEST['service']);$i++)
+			{
+				if ($_REQUEST['service'][$i] !="" && $_REQUEST['offerprice'][$i] != "") {
+					$booking_service 	= $_REQUEST['service'][$i];
+					$actual_price 		= $_REQUEST['actualprice'][$i];
+					$offer_price 		= $_REQUEST['offerprice'][$i];
+						
+					$fields	= array('bookingid','serviceid','actualprice','offerprice','status');
+					$values	= array($updated,$booking_service, $actual_price,$offer_price,'0');
+			
+					$Booking->addBookingservices(array_combine ( $fields, $values ));				
+				}
+			}
+			
+			if ($_REQUEST['status'] == '5') {				
+				//$r = $Booking->getcreditByBookingid($updated);
+								
+				//if (count($r) == 0) {				
+					$field_values = array('customerid' => $_REQUEST['customer'],'bookingid' => $updated, 'credit' => -$_REQUEST['totalprice'],'credittype' => '1','date_added' => date('Y-m-d H:i:s'));
+										
+					$add = $Booking->addcreditmanagement($field_values);
+					
+					if ($add) {
+						$data 		= $Booking->getCustomerById($_REQUEST['customer']);
+						$usercredit = $data->credit;
+						
+						$newcredit	= $usercredit - $_REQUEST['totalprice'];
+						
+						$fieldvalues1 = array('credit' => $newcredit);							
+						$cond = array('id'=> $_REQUEST['customer']);
+							
+						$Booking->updateCustomer($fieldvalues1,$cond);
+					}
+				//}
+			} else if ($_REQUEST['status'] == '4') {
+				
+				$totprice = ($_REQUEST['totalprice']*50)/100;
+				
+				$field_values = array('customerid' => $_REQUEST['customer'],'bookingid' => $updated, 'credit' => -$totprice,'credittype' => '1','date_added' => date('Y-m-d H:i:s'));
+				
+				$add = $Booking->addcreditmanagement($field_values);
+					
+				if ($add) {
+					$data 		= $Booking->getCustomerById($_REQUEST['customer']);
+					$usercredit = $data->credit;
+				
+					$newcredit	= $usercredit - $totprice;
+				
+					$fieldvalues1 = array('credit' => $newcredit);
+					$cond = array('id'=> $_REQUEST['customer']);
+						
+					$Booking->updateCustomer($fieldvalues1,$cond);
+				}
+			}
+		}
 		
 		$details = $Booking->getBookingById($updated);
 		$user = $details->customername;
@@ -130,7 +163,7 @@
 			$msg.="Your '".$servicenm."' service is booked. And your booking status is <b>".$status."</b>";
 			$mail->MsgHTML($msg);
 	
-			$mail->AddAddress('nirmalaparmar29@gmail.com'); //$_REQUEST['emailaddress']
+			$mail->AddAddress($_REQUEST['emailaddress']);
 			if(!$mail->Send()){$mail->ErrorInfo;}
 			$mail->ClearAddresses();			
 		}
@@ -151,10 +184,27 @@
 	
 	/*********************************************************************************************************/
 	
-	if ($_REQUEST['FLAG']=='EDIT_BOOKING') {		
-		if (trim($_REQUEST['offerprice'])!="") {
+	if ($_REQUEST['FLAG']=='EDIT_BOOKING') {	
+		
+		if (trim($_REQUEST['service'][0])=="") {
+			$_SESSION['msg']='Please select service';
+			$num='danger';
+			$num.='&id='.$_REQUEST['id'];
+			$url= ADMIN_URL."/bookings/edit.php";
+			$general->redirectUrl($url, $num);
+			exit;
+		}
+		
+		if (trim($_REQUEST['offerprice'][0])=="") {
+			$_SESSION['msg']='Please enter offer price';
+			$num='danger';
+			$num.='&id='.$_REQUEST['id'];
+			$url= ADMIN_URL."/bookings/edit.php";
+			$general->redirectUrl($url, $num);
+			exit;
+		} else {
 			$pattern = '/^[0-9]+(?:\.[0-9]{0,2})?$/';
-			if (preg_match($pattern, trim($_REQUEST['totalprice'])) == '0') {
+			if (preg_match($pattern, trim($_REQUEST['offerprice'][0])) == '0') {
 				$_SESSION['msg']='Please enter valid offer price';
 				$num='danger';
 				$num.='&id='.$_REQUEST['id'];
@@ -182,25 +232,6 @@
 			exit;
 		}
 				
-		if (trim($_REQUEST['totalprice'])=="") {
-			$_SESSION['msg']='Please enter total price';
-			$num='danger';
-			$num.='&id='.$_REQUEST['id'];
-			$url= ADMIN_URL."/bookings/edit.php";
-			$general->redirectUrl($url, $num);
-			exit;
-		}else{
-			$pattern = '/^[0-9]+(?:\.[0-9]{0,2})?$/';
-			if (preg_match($pattern, trim($_REQUEST['totalprice'])) == '0') {
-				$_SESSION['msg']='Please enter valid total price';
-				$num='danger';
-				$num.='&id='.$_REQUEST['id'];
-				$url= ADMIN_URL."/bookings/edit.php";
-				$general->redirectUrl($url, $num);
-				exit;
-			}
-		}
-		
 		if ($_REQUEST['status'] == '5') {
 			if (trim($_REQUEST['therapist'])=="") {
 				$_SESSION['msg']='Please select therapist';
@@ -211,54 +242,99 @@
 				exit;
 			}
 		}
-		
-		$details = $Booking->getBookingById($_REQUEST['id']);
-		$user = $details->customername;
-		$servicenm = $details->servicename;
-		
-		if ($_REQUEST['status'] == '1') {
-			$status = "New";
-		} else if ($_REQUEST['status'] == '2') {
-			$status = "Confirmed";
-		} else if ($_REQUEST['status'] == '3') {
-			$status = "Cancelled";
-		} else if ($_REQUEST['status'] == '4') {
-			$status = "Absent";
-		} else if ($_REQUEST['status'] == '5') {
-			$status = "Complete";
-		}
-				
+			
 		$cond		= array("id" => $_REQUEST['id']);
 
-		$fieldvalues = array('staffid' => $_REQUEST['therapist'], 'offerprice'=> $_REQUEST['offerprice'], "servicedate" => $_REQUEST['servicedate'], "servicetime" => $_REQUEST['servicetime'], "totalprice" => $_REQUEST['totalprice'],"status" => $_REQUEST['status']);
+		if ($_REQUEST['therapist'] != '') {		
+			$fieldvalues = array('staffid' => $_REQUEST['therapist'], "servicedate" => $_REQUEST['servicedate'], "servicetime" => $_REQUEST['servicetime'], "totalprice" => $_REQUEST['totalprice'],"status" => $_REQUEST['status']);
+		} else {
+			$fieldvalues = array("servicedate" => $_REQUEST['servicedate'], "servicetime" => $_REQUEST['servicetime'], "totalprice" => $_REQUEST['totalprice'],"status" => $_REQUEST['status']);
+		}
 				
 		$updated = $Booking->updateBooking($fieldvalues, $cond);
+		
+		if ($updated) {				
+			for($i=0;$i<count($_REQUEST['serviceids']);$i++)
+			{
+				if ($_REQUEST['serviceids'][$i] !="" && $_REQUEST['offerprice'][$i] != "") {
+					
+					$booking_service 	= $_REQUEST['serviceids'][$i];
+					$actual_price 		= $_REQUEST['actualprice'][$i];
+					$offer_price 		= $_REQUEST['offerprice'][$i];
+					
+					if ($_REQUEST['servicerowid'][$i] != '0') {
 						
-		if ($updated) {
-			if ($_REQUEST['status'] == '5') {
-				
-				$r = $Booking->getcreditByBookingid($_REQUEST['id']);
-				
-				if (count($r) == 0) {				
-					$field_values = array('customerid' => $_REQUEST['customer_id'],'bookingid' => $_REQUEST['id'], 'credit' => -$_REQUEST['actualprice'],'credittype' => '1','date_added' => date('Y-m-d H:i:s'));
+						$cond = array('id'=> $_REQUEST['servicerowid'][$i]);
+												
+						$field_values1 = array('serviceid' => $booking_service,'actualprice' => $actual_price,'offerprice' => $offer_price,'status' => $_REQUEST['bookingservicestatus'][$i]);
+						$Booking->updateBookingservices($field_values1,$cond);
+					} else {
+						
+						$field_values1 = array('bookingid' =>$_REQUEST['id'] ,'serviceid' => $booking_service,'actualprice' => $actual_price,'offerprice' => $offer_price,'status' => $_REQUEST['bookingservicestatus'][$i]);
+						$Booking->addBookingservices($field_values1);
+					}
+				}
+			}
+						
+			if ($_REQUEST['status'] == '5') {				
+				//$r = $Booking->getcreditByBookingid($_REQUEST['id']);
+								
+				//if (count($r) == 0) {				
+					$field_values = array('customerid' => $_REQUEST['customer_id'],'bookingid' => $_REQUEST['id'], 'credit' => -$_REQUEST['totalprice'],'credittype' => '1','date_added' => date('Y-m-d H:i:s'));
 										
 					$add = $Booking->addcreditmanagement($field_values);
 					
 					if ($add) {
-						$data 		= $Booking->getCutomerById($_REQUEST['customer_id']);
+						$data 		= $Booking->getCustomerById($_REQUEST['customer_id']);
 						$usercredit = $data->credit;
 						
-						$newcredit	= $usercredit - $_REQUEST['actualprice'];
+						$newcredit	= $usercredit - $_REQUEST['totalprice'];
 						
 						$fieldvalues1 = array('credit' => $newcredit);							
 						$cond = array('id'=> $_REQUEST['customer_id']);
 							
 						$Booking->updateCustomer($fieldvalues1,$cond);
 					}
+				//}
+			} else if ($_REQUEST['status'] == '4') {
+				
+				$totprice = ($_REQUEST['totalprice']*50)/100;
+				
+				$field_values = array('customerid' => $_REQUEST['customer_id'],'bookingid' => $_REQUEST['id'], 'credit' => -$totprice,'credittype' => '1','date_added' => date('Y-m-d H:i:s'));
+				
+				$add = $Booking->addcreditmanagement($field_values);
+					
+				if ($add) {
+					$data 		= $Booking->getCustomerById($_REQUEST['customer_id']);
+					$usercredit = $data->credit;
+				
+					$newcredit	= $usercredit - $totprice;
+				
+					$fieldvalues1 = array('credit' => $newcredit);
+					$cond = array('id'=> $_REQUEST['customer_id']);
+						
+					$Booking->updateCustomer($fieldvalues1,$cond);
 				}
 			}
 			
 			if ($_REQUEST['hdnlaststatus'] != $_REQUEST['status']) {
+				
+				$details = $Booking->getBookingById($_REQUEST['id']);
+				$user = $details->customername;
+				$servicenm = $details->servicename;
+				
+				if ($_REQUEST['status'] == '1') {
+					$status = "New";
+				} else if ($_REQUEST['status'] == '2') {
+					$status = "Confirmed";
+				} else if ($_REQUEST['status'] == '3') {
+					$status = "Cancelled";
+				} else if ($_REQUEST['status'] == '4') {
+					$status = "Absent";
+				} else if ($_REQUEST['status'] == '5') {
+					$status = "Complete";
+				}
+				
 				$mail = new PHPMailer();
 				$mail->IsSMTP(); // telling the class to use SMTP
 				$mail->Host       = "smtp.gmail.com"; // SMTP server
@@ -352,8 +428,16 @@
 		$id=$_REQUEST['id'];
 	
 		$record = $Booking->getServiceById($id);
-		echo $record->price;
-		exit;
+				
+		if ($record->price != '') {
+			echo $record->price;
+			exit;
+		} else {
+			echo "error";
+			exit;
+		}
+		
+		
 	}	
 	/*********************************************************************************************************/
 ?>

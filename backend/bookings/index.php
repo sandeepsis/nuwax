@@ -106,7 +106,6 @@
                     <tr>
                         <th class="table-checkbox"><input type="checkbox" class="group-checkable" data-set="#sample_1 .checkboxes"/></th>
                         <th>Customer Name</th>
-                        <th>Service</th>
                         <th>Service Date</th>
                         <th>Service Time</th>
                         <th>Total Price</th>
@@ -138,7 +137,6 @@
                         <tr class="<?php echo (($index+1)%2==0)? 'even':'odd' ?> gradeX">
                             <td> <input  name="delete[]" type="checkbox" id="delete[]" value="<?php echo $rows['id'] ;?>" class="checkboxes" /> </td>
                             <td><?php echo $general->subStr($rows['customername'], 60); ?></td>
-                            <td><?php echo $general->subStr($rows['servicename'], 60); ?></td>
                             <td><?php echo $rows['servicedate'];?></td>
                             <td><?php echo $rows['servicetime'];?></td>
                             <td><?php echo $rows['totalprice'];?></td>
@@ -277,7 +275,7 @@ var TableManaged = function () {
             },
             "columnDefs": [{  // set default column settings
                 'orderable': false,
-                'targets': [0,8]
+                'targets': [0,7]
             }, {
                 "searchable": false,
                 "targets": [0,4]

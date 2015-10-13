@@ -382,9 +382,11 @@
 	
 		if ($updated) {
 			if ($_REQUEST['creditprovided'] != "") {
-				$r = $Package->getcreditByPackageid($updated);
+								
+				//$r = $Package->getcreditByPackageid($_REQUEST['id']);
 				
-				if (count($r) == 0) {
+				//if (count($r) == 0) {
+					
 					$field_values = array('customerid' => $_REQUEST['customer'],'packageid' => $_REQUEST['id'], 'credit' => $_REQUEST['creditprovided'],'credittype' => '0','date_added' => date('Y-m-d H:i:s'));
 				
 					$add = $Package->addcreditmanagement($field_values);
@@ -400,7 +402,7 @@
 							
 						$Package->updateCustomer($fieldvalues1,$cond);
 					}
-				}
+				//}
 			}
 		}
 		
